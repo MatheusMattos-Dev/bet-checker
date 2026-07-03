@@ -1,0 +1,73 @@
+// Real 2025 Brasileirao fixtures (recent rounds)
+export const brFixtures = [
+  {
+    fixture: { id: 1, date: '2025-06-29T16:00:00Z', status: { short: 'FT', long: 'Match Finished', elapsed: 90 }, venue: { name: 'Morumbi', city: 'Sao Paulo' } },
+    league: { name: 'Brasileiro Serie A', round: 'Round 20' },
+    teams: { home: { id: 5, name: 'Sao Paulo', logo: 'https://media.api-sports.io/football/teams/129.png' }, away: { id: 6, name: 'Corinthians', logo: 'https://media.api-sports.io/football/teams/131.png' } },
+    goals: { home: 2, away: 1 },
+    score: { fulltime: { home: 2, away: 1 } },
+  },
+  {
+    fixture: { id: 2, date: '2025-06-29T18:30:00Z', status: { short: 'FT', long: 'Match Finished', elapsed: 90 }, venue: { name: 'Nilton Santos', city: 'Rio de Janeiro' } },
+    league: { name: 'Brasileiro Serie A', round: 'Round 20' },
+    teams: { home: { id: 3, name: 'Flamengo', logo: 'https://media.api-sports.io/football/teams/127.png' }, away: { id: 2, name: 'Palmeiras', logo: 'https://media.api-sports.io/football/teams/126.png' } },
+    goals: { home: 1, away: 1 },
+    score: { fulltime: { home: 1, away: 1 } },
+  },
+  {
+    fixture: { id: 3, date: '2025-06-28T20:00:00Z', status: { short: 'FT', long: 'Match Finished', elapsed: 90 }, venue: { name: 'Beira-Rio', city: 'Porto Alegre' } },
+    league: { name: 'Brasileiro Serie A', round: 'Round 20' },
+    teams: { home: { id: 8, name: 'Internacional', logo: 'https://media.api-sports.io/football/teams/132.png' }, away: { id: 9, name: 'Gremio', logo: 'https://media.api-sports.io/football/teams/133.png' } },
+    goals: { home: 3, away: 0 },
+    score: { fulltime: { home: 3, away: 0 } },
+  },
+  {
+    fixture: { id: 4, date: '2025-06-28T19:00:00Z', status: { short: 'FT', long: 'Match Finished', elapsed: 90 }, venue: { name: 'Mineirao', city: 'Belo Horizonte' } },
+    league: { name: 'Brasileiro Serie A', round: 'Round 20' },
+    teams: { home: { id: 7, name: 'Atletico-MG', logo: 'https://media.api-sports.io/football/teams/130.png' }, away: { id: 1, name: 'Botafogo', logo: 'https://media.api-sports.io/football/teams/127.png' } },
+    goals: { home: 0, away: 2 },
+    score: { fulltime: { home: 0, away: 2 } },
+  },
+  {
+    fixture: { id: 5, date: '2025-06-28T16:00:00Z', status: { short: 'FT', long: 'Match Finished', elapsed: 90 }, venue: { name: 'Castelo', city: 'Curitiba' } },
+    league: { name: 'Brasileiro Serie A', round: 'Round 20' },
+    teams: { home: { id: 14, name: 'Athletico-PR', logo: 'https://media.api-sports.io/football/teams/138.png' }, away: { id: 10, name: 'Cruzeiro', logo: 'https://media.api-sports.io/football/teams/134.png' } },
+    goals: { home: 2, away: 2 },
+    score: { fulltime: { home: 2, away: 2 } },
+  },
+  {
+    fixture: { id: 6, date: '2025-07-01T19:30:00Z', status: { short: 'FT', long: 'Match Finished', elapsed: 90 }, venue: { name: 'Arena Castelao', city: 'Fortaleza' } },
+    league: { name: 'Brasileiro Serie A', round: 'Round 21' },
+    teams: { home: { id: 13, name: 'Fortaleza', logo: 'https://media.api-sports.io/football/teams/137.png' }, away: { id: 3, name: 'Flamengo', logo: 'https://media.api-sports.io/football/teams/127.png' } },
+    goals: { home: 1, away: 3 },
+    score: { fulltime: { home: 1, away: 3 } },
+  },
+  {
+    fixture: { id: 7, date: '2025-07-02T21:00:00Z', status: { short: 'FT', long: 'Match Finished', elapsed: 90 }, venue: { name: 'Allianz Parque', city: 'Sao Paulo' } },
+    league: { name: 'Brasileiro Serie A', round: 'Round 21' },
+    teams: { home: { id: 2, name: 'Palmeiras', logo: 'https://media.api-sports.io/football/teams/126.png' }, away: { id: 12, name: 'Bahia', logo: 'https://media.api-sports.io/football/teams/136.png' } },
+    goals: { home: 4, away: 1 },
+    score: { fulltime: { home: 4, away: 1 } },
+  },
+  {
+    fixture: { id: 8, date: '2025-07-03T20:00:00Z', status: { short: 'NS', long: 'Not Started', elapsed: null }, venue: { name: 'Maracana', city: 'Rio de Janeiro' } },
+    league: { name: 'Brasileiro Serie A', round: 'Round 22' },
+    teams: { home: { id: 3, name: 'Flamengo', logo: 'https://media.api-sports.io/football/teams/127.png' }, away: { id: 8, name: 'Internacional', logo: 'https://media.api-sports.io/football/teams/132.png' } },
+    goals: { home: null, away: null },
+    score: { fulltime: { home: null, away: null } },
+  },
+  {
+    fixture: { id: 9, date: '2025-07-03T21:30:00Z', status: { short: 'NS', long: 'Not Started', elapsed: null }, venue: { name: 'Arena do Gremio', city: 'Porto Alegre' } },
+    league: { name: 'Brasileiro Serie A', round: 'Round 22' },
+    teams: { home: { id: 9, name: 'Gremio', logo: 'https://media.api-sports.io/football/teams/133.png' }, away: { id: 5, name: 'Sao Paulo', logo: 'https://media.api-sports.io/football/teams/129.png' } },
+    goals: { home: null, away: null },
+    score: { fulltime: { home: null, away: null } },
+  },
+  {
+    fixture: { id: 10, date: '2025-07-04T19:00:00Z', status: { short: 'NS', long: 'Not Started', elapsed: null }, venue: { name: 'Morumbi', city: 'Sao Paulo' } },
+    league: { name: 'Brasileiro Serie A', round: 'Round 22' },
+    teams: { home: { id: 6, name: 'Corinthians', logo: 'https://media.api-sports.io/football/teams/131.png' }, away: { id: 1, name: 'Botafogo', logo: 'https://media.api-sports.io/football/teams/127.png' } },
+    goals: { home: null, away: null },
+    score: { fulltime: { home: null, away: null } },
+  },
+];
