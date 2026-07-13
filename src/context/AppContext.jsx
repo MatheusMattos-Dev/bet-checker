@@ -1,66 +1,52 @@
 import { createContext, useContext, useState, useCallback, useMemo } from 'react';
-import { brStandings } from '../data/standings';
-import { brFixtures } from '../data/fixtures';
-import { brScorers } from '../data/scorers';
-import { brTeams, plTeams, generateTeamDetails } from '../data/mock';
+import { getTeams, getEliminated, getRoundOf16, getRoundOf32, getQuarterfinals, getTeamById, getComparativeAnalyses, getH2H, computeExpectedGoals, getFormTrend, getPlayStyleNarrative, getBracket, getPlayers } from '../data/world-cup';
 
 const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
-  const [league, setLeague] = useState('br');
-  const [selectedFixture, setSelectedFixture] = useState(null);
-  const [selectedTeam, setSelectedTeam] = useState(null);
-
-  // All data is local, no API calls
-  const standings = useMemo(() => ({ br: brStandings }), []);
-  const fixtures = useMemo(() => brFixtures, []);
-  const topScorers = useMemo(() => brScorers, []);
+  const [worldCupView, setWorldCupView] = useState('bracket');
+  const [selectedWCTeam, setSelectedWCTeam] = useState(null);
+  const [selectedWCMatch, setSelectedWCMatch] = useState(null);
 
   const goHome = useCallback(() => {
-    setSelectedFixture(null);
-    setSelectedTeam(null);
+    setWorldCupView('bracket');
+    setSelectedWCTeam(null);
+    setSelectedWCMatch(null);
   }, []);
 
-  const navigateToFixture = useCallback((fixture) => {
-    setSelectedTeam(null);
-    setSelectedFixture(fixture);
+  const navigateWCView = useCallback((view, team = null, match = null) => {
+    setWorldCupView(view);
+    setSelectedWCTeam(team);
+    setSelectedWCMatch(match);
   }, []);
 
-  const navigateToTeam = useCallback((team) => {
-    setSelectedFixture(null);
-    setSelectedTeam(team);
-  }, []);
+  const wcTeams = useMemo(() => getTeams(), []);
+  const wcEliminated = useMemo(() => getEliminated(), []);
+  const wcRoundOf16 = useMemo(() => getRoundOf16(), []);
+  const wcQuarterfinals = useMemo(() => getQuarterfinals(), []);
+  const wcBracket = useMemo(() => getBracket(), []);
+  const wcAnalyses = useMemo(() => getComparativeAnalyses(), []);
+  const wcPlayers = useMemo(() => getPlayers(), []);
+  const wcRoundOf32 = useMemo(() => getRoundOf32(), []);
 
-  const getTeamStats = useCallback((teamId) => {
-    const teams = brTeams;
-    const team = teams.find(t => t.id === teamId) || teams[0];
-    return generateTeamDetails(team, 'br');
-  }, []);
-
-  const searchTeams = useCallback((query) => {
-    const allTeams = [...brTeams, ...plTeams];
-    return allTeams.filter(t =>
-      t.name.toLowerCase().includes(query.toLowerCase())
-    ).slice(0, 5);
-  }, []);
+  const getWCTeam = useCallback((id) => getTeamById(id), []);
+  const getWCH2H = useCallback((a, b) => getH2H(a, b), []);
+  const getWCEligibleGoals = useCallback((team, opponent) => computeExpectedGoals(team, opponent), []);
+  const getWCTeamForm = useCallback((team) => getFormTrend(team), []);
+  const getWCTeamStyle = useCallback((team) => getPlayStyleNarrative(team), []);
 
   const value = useMemo(() => ({
-    league,
-    setLeague,
-    goHome,
-    navigateToFixture,
-    navigateToTeam,
-    selectedFixture,
-    selectedTeam,
-    standings,
-    fixtures,
-    topScorers,
-    getTeamStats,
-    searchTeams,
+    goHome, navigateWCView,
+    worldCupView,
+    selectedWCTeam, selectedWCMatch,
+    wcTeams, wcEliminated, wcRoundOf16, wcRoundOf32, wcQuarterfinals, wcBracket, wcAnalyses, wcPlayers,
+    getWCTeam, getWCH2H, getWCEligibleGoals, getWCTeamForm, getWCTeamStyle,
   }), [
-    league, setLeague, goHome, navigateToFixture, navigateToTeam,
-    selectedFixture, selectedTeam, standings, fixtures, topScorers,
-    getTeamStats, searchTeams,
+    goHome, navigateWCView,
+    worldCupView,
+    selectedWCTeam, selectedWCMatch,
+    wcTeams, wcEliminated, wcRoundOf16, wcRoundOf32, wcQuarterfinals, wcBracket, wcAnalyses, wcPlayers,
+    getWCTeam, getWCH2H, getWCEligibleGoals, getWCTeamForm, getWCTeamStyle,
   ]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
