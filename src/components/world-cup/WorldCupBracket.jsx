@@ -3,150 +3,205 @@ import { useApp } from '../../context/AppContext';
 function MatchCard({ match, round, isPlayed }) {
   const { navigateWCView } = useApp();
 
+  const homeWins = isPlayed && match.homeGoals > match.awayGoals;
+  const awayWins = isPlayed && match.awayGoals > match.homeGoals;
+
   return (
     <div
-      className={`bg-white dark:bg-dark-800 rounded-xl p-3 shadow-sm border transition-all cursor-pointer ${
+      className={`bg-surface-800 rounded-xl p-4 border cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-accent-500/5 active:scale-[0.98] ${
         isPlayed
-          ? 'border-green-500/30 hover:border-[#d4a017]/50'
-          : 'border-[#d4a017]/30 hover:border-[#d4a017]/60'
+          ? 'border-accent-500/30 hover:border-accent-500/50'
+          : 'border-surface-600/50 hover:border-surface-700'
       }`}
       onClick={() => navigateWCView('match', null, { ...match, round })}
     >
-      <div className="text-[10px] text-gray-400 mb-1.5 flex items-center justify-between">
-        <span>{match.date}</span>
-        <span>{match.venue}</span>
+      {/* Meta line */}
+      <div className="flex items-center justify-between mb-3 pb-3 border-b border-surface-600/30">
+        <span className="text-[10px] text-text-muted font-mono">{match.date}</span>
+        <span className="text-[10px] text-text-muted font-mono">{match.venue}</span>
       </div>
-      <div className="space-y-1">
+
+      {/* Teams */}
+      <div className="space-y-2.5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm">{match.homeFlag || ''}</span>
-            <span className={`text-xs font-medium ${isPlayed && match.homeGoals > match.awayGoals ? 'text-green-500 font-bold' : ''}`}>
+          <div className="flex items-center gap-2">
+            <span className="text-base">{match.homeFlag || ''}</span>
+            <span className={`text-sm font-medium ${homeWins ? 'text-accent-300 font-bold' : 'text-text-primary'}`}>
               {match.home}
             </span>
           </div>
-          <span className={`text-xs font-bold ${isPlayed ? (match.homeGoals > match.awayGoals ? 'text-green-500' : 'text-gray-400') : 'text-[#d4a017]'}`}>
+          <span className={`text-sm font-bold font-mono ${homeWins ? 'text-accent-300' : isPlayed ? 'text-text-muted' : 'text-gold-400'}`}>
             {isPlayed ? match.homeGoals : '?'}
           </span>
         </div>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm">{match.awayFlag || ''}</span>
-            <span className={`text-xs font-medium ${isPlayed && match.awayGoals > match.homeGoals ? 'text-green-500 font-bold' : ''}`}>
+          <div className="flex items-center gap-2">
+            <span className="text-base">{match.awayFlag || ''}</span>
+            <span className={`text-sm font-medium ${awayWins ? 'text-accent-300 font-bold' : 'text-text-primary'}`}>
               {match.away}
             </span>
           </div>
-          <span className={`text-xs font-bold ${isPlayed ? (match.awayGoals > match.homeGoals ? 'text-green-500' : 'text-gray-400') : 'text-[#d4a017]'}`}>
+          <span className={`text-sm font-bold font-mono ${awayWins ? 'text-accent-300' : isPlayed ? 'text-text-muted' : 'text-gold-400'}`}>
             {isPlayed ? match.awayGoals : '?'}
           </span>
         </div>
       </div>
-      {match.extraTime && <div className="text-[9px] text-yellow-400 mt-1 text-center">Prorrogação</div>}
-      {match.penalties && <div className="text-[9px] text-yellow-400 mt-1 text-center">Disputa de pênaltis</div>}
+
+      {/* Extra info */}
+      {(match.extraTime || match.penalties) && (
+        <div className="mt-3 pt-3 border-t border-surface-600/30 space-y-1">
+          {match.extraTime && <p className="text-[10px] text-gold-400">Prorrogação</p>}
+          {match.penalties && <p className="text-[10px] text-gold-400">Pênaltis: {match.penalties}</p>}
+        </div>
+      )}
     </div>
   );
 }
 
-function getFlag(name) {
-  const flags = {
-    'Espanha': '🇪🇸', 'Bélgica': '🇧🇪', 'Noruega': '🇳🇴', 'Inglaterra': '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
-    'França': '🇫🇷', 'Marrocos': '🇲🇦', 'Argentina': '🇦🇷', 'Suíça': '🇨🇭',
-    'Portugal': '🇵🇹', 'EUA': '🇺🇸', 'Brasil': '🇧🇷', 'México': '🇲🇽',
-    'Paraguai': '🇵🇾', 'Canadá': '🇨🇦', 'Egito': '🇪🇬', 'Colômbia': '🇨🇴',
-    'Cabo Verde': '🇨🇻',
-    'Áustria': '🇦🇹', 'Senegal': '🇸🇳', 'Costa do Marfim': '🇨🇮', 'Congo DR': '🇨🇩',
-    'Suécia': '🇸🇪', 'Holanda': '🇳🇱', 'Argélia': '🇩🇿', 'África do Sul': '🇿🇦',
-    'Bósnia': '🇧🇦', 'Croácia': '🇭🇷', 'Alemanha': '🇩🇪', 'Gana': '🇬🇭',
-    'Uruguai': '🇺🇾', 'Japão': '🇯🇵', 'Catar': '🇶🇦', 'Austrália': '🇦🇺',
-  };
-  return flags[name] || '';
+function RoundSection({ title, matches, played, cols, accent = 'accent', subtitle }) {
+  const dotColor = accent === 'gold' ? 'bg-gold-500' : accent === 'muted' ? 'bg-surface-600' : 'bg-accent-500';
+  const titleColor = accent === 'gold' ? 'text-gold-400' : accent === 'muted' ? 'text-text-secondary' : 'text-accent-300';
+  const lineColor = accent === 'gold' ? 'from-gold-500/20' : accent === 'muted' ? 'from-surface-600/20' : 'from-accent-500/20';
+
+  return (
+    <div className="mb-10">
+      {/* Section header with decorative line */}
+      <div className="flex items-center gap-3 mb-1">
+        <div className={`w-2 h-2 rounded-full ${dotColor} ${accent === 'gold' ? 'animate-pulse' : ''}`} />
+        <h2 className={`text-base font-display font-bold ${titleColor}`}>
+          {title}
+        </h2>
+        {subtitle && (
+          <span className="text-xs text-text-muted font-mono ml-1">{subtitle}</span>
+        )}
+      </div>
+      {/* Decorative gradient line */}
+      <div className={`h-px bg-gradient-to-r ${lineColor} to-transparent mb-5`} />
+
+      {/* Matches grid */}
+      <div className={cols}>
+        {matches.map((match, i) => (
+          <MatchCard key={`${title}-${i}`} match={match} round={title} isPlayed={played} />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default function WorldCupBracket() {
   const { wcBracket } = useApp();
-  const { roundOf32, roundOf16, quarterfinals, semifinals } = wcBracket;
 
-  const r32WithFlags = roundOf32.map(m => ({
-    ...m,
-    homeFlag: getFlag(m.home),
-    awayFlag: getFlag(m.away),
+  const getFlag = (teamName) => {
+    const flags = {
+      'EUA': '🇺🇸', 'Uruguai': '🇺🇾', 'França': '🇫🇷', 'Austrália': '🇦🇺',
+      'Bélgica': '🇧🇪', 'Marrocos': '🇲🇦', 'Holanda': '🇳🇱', 'Japão': '🇯🇵',
+      'Inglaterra': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Senaegal': '🇸🇳', 'Sénegal': '🇸🇳', 'Tunísia': '🇹🇳',
+      'Brasil': '🇧🇷', 'Croácia': '🇭🇷', 'Portugal': '🇵🇹', 'Colômbia': '🇨🇴',
+      'Espanha': '🇪🇸', 'Geórgia': '🇬🇪', 'Alemanha': '🇩🇪', 'Jordânia': '🇯🇴',
+      'Argentina': '🇦🇷', 'Arábia Saudita': '🇸🇦', 'Itália': '🇮🇹', 'Ucrânia': '🇺🇦',
+      'México': '🇲🇽', 'ZAF': '🇿🇦', 'Canadá': '🇨🇦', 'Camarões': '🇨🇲',
+      'Coreia do Sul': '🇰🇷', 'Costa Rica': '🇨🇷', 'Nigéria': '🇳🇬', 'Paraguai': '🇵🇾',
+      'Suíça': '🇨🇭', 'Egito': '🇪🇬', 'Irã': '🇮🇷', 'Quênia': '🇰🇪',
+      'Áustria': '🇦🇹', 'Hungria': '🇭🇺', 'Mali': '🇲🇱',
+      'Ucrânia': '🇺🇦', 'Israel': '🇮🇱', 'Sérvia': '🇷🇸', 'Cabo Verde': '🇨🇻',
+      'Chile': '🇨🇱', 'Jamaica': '🇯🇲',
+    };
+    return flags[teamName] || '🏳️';
+  };
+
+  const r32WithFlags = (wcBracket?.roundOf32 || []).map(m => ({
+    ...m, homeFlag: getFlag(m.home), awayFlag: getFlag(m.away),
   }));
 
-  const r16WithFlags = roundOf16.map(m => ({
-    ...m,
-    homeFlag: getFlag(m.home),
-    awayFlag: getFlag(m.away),
+  const r16WithFlags = (wcBracket?.roundOf16 || []).map(m => ({
+    ...m, homeFlag: getFlag(m.home), awayFlag: getFlag(m.away),
   }));
 
-  const qfWithFlags = quarterfinals.map(m => ({
-    ...m,
-    homeFlag: getFlag(m.home),
-    awayFlag: getFlag(m.away),
+  const qfWithFlags = (wcBracket?.quarterfinals || []).map(m => ({
+    ...m, homeFlag: getFlag(m.home), awayFlag: getFlag(m.away),
   }));
 
-  const sfWithFlags = semifinals.map(m => ({
-    ...m,
-    homeFlag: getFlag(m.home),
-    awayFlag: getFlag(m.away),
+  const sfWithFlags = (wcBracket?.semifinals || []).map(m => ({
+    ...m, homeFlag: getFlag(m.home), awayFlag: getFlag(m.away),
   }));
 
   return (
-    <div className="space-y-8">
-      {/* Round of 32 */}
-      <div>
-        <h2 className="text-lg font-bold text-[#d4a017] mb-3 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-green-500"></span>
-          Round of 32 — Concluídas
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-          {r32WithFlags.map((match, i) => (
-            <MatchCard key={`r32-${i}`} match={match} round="Round of 32" isPlayed={true} />
-          ))}
-        </div>
-      </div>
+    <div>
+      <RoundSection
+        title="Round de 32"
+        subtitle="1ª Fase Eliminatória"
+        matches={r32WithFlags}
+        played={true}
+        cols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+      />
 
-      {/* Oitavas de Final */}
-      <div>
-        <h2 className="text-lg font-bold text-[#d4a017] mb-3 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-green-500"></span>
-          Oitavas de Final — Concluídas
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-          {r16WithFlags.map((match, i) => (
-            <MatchCard key={`r16-${i}`} match={match} round="Oitavas" isPlayed={true} />
-          ))}
-        </div>
-      </div>
+      <RoundSection
+        title="Oitavas de Final"
+        matches={r16WithFlags}
+        played={true}
+        cols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+      />
 
-      {/* Quartas de Final */}
-      <div>
-        <h2 className="text-lg font-bold text-[#d4a017] mb-3 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-green-500"></span>
-          Quartas de Final — Concluídas
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {qfWithFlags.map((match, i) => (
-            <MatchCard key={`qf-${i}`} match={match} round="Quartas" isPlayed={true} />
-          ))}
-        </div>
-      </div>
+      <RoundSection
+        title="Quartas de Final"
+        matches={qfWithFlags}
+        played={true}
+        cols="grid-cols-1 md:grid-cols-2 gap-4"
+      />
 
-      {/* Semifinais */}
-      <div>
-        <h2 className="text-lg font-bold text-[#d4a017] mb-3 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
-          Semifinais — Em Andamento
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {sfWithFlags.map((match, i) => (
-            <MatchCard key={`sf-${i}`} match={match} round="Semifinais" isPlayed={false} />
-          ))}
-        </div>
-      </div>
+      <RoundSection
+        title="Semifinais"
+        matches={sfWithFlags}
+        played={true}
+        cols="grid-cols-1 md:grid-cols-2 gap-4"
+      />
 
       {/* Final */}
-      <div className="bg-white/5 dark:bg-dark-800/50 rounded-xl p-4 border border-dashed border-gray-600 text-center">
-        <p className="text-sm text-gray-400">Final — 19 de Julho</p>
-        <p className="text-xs text-gray-500 mt-1">A definir após semifinais</p>
+      <div className="mb-10">
+        <div className="flex items-center gap-3 mb-1">
+          <div className="w-2 h-2 rounded-full bg-gold-500 animate-pulse" />
+          <h2 className="text-base font-display font-bold text-gold-400">Final</h2>
+          <span className="text-xs text-text-muted font-mono ml-1">19 de Julho</span>
+        </div>
+        <div className="h-px bg-gradient-to-r from-gold-500/20 to-transparent mb-5" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {(() => {
+            const final = wcBracket?.final;
+            if (!final) return null;
+            return (
+              <MatchCard
+                key="final"
+                match={{ ...final, homeFlag: getFlag(final.home), awayFlag: getFlag(final.away) }}
+                round="Final"
+                isPlayed={false}
+              />
+            );
+          })()}
+        </div>
+      </div>
+
+      {/* 3º Lugar */}
+      <div className="mb-10">
+        <div className="flex items-center gap-3 mb-1">
+          <div className="w-2 h-2 rounded-full bg-surface-600" />
+          <h2 className="text-base font-display font-bold text-text-secondary">3º Lugar</h2>
+          <span className="text-xs text-text-muted font-mono ml-1">18 de Julho</span>
+        </div>
+        <div className="h-px bg-gradient-to-r from-surface-600/20 to-transparent mb-5" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {(() => {
+            const tp = wcBracket?.thirdPlace;
+            if (!tp) return null;
+            return (
+              <MatchCard
+                key="third"
+                match={{ ...tp, homeFlag: getFlag(tp.home), awayFlag: getFlag(tp.away) }}
+                round="3º Lugar"
+                isPlayed={false}
+              />
+            );
+          })()}
+        </div>
       </div>
     </div>
   );

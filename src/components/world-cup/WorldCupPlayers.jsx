@@ -8,7 +8,6 @@ export default function WorldCupPlayers() {
   const allPlayers = getPlayers();
   const teams = [...new Set(allPlayers.map(p => p.team))];
 
-  // Calculate shotsOnTarget per game for each player
   const playersWithAvg = useMemo(() => {
     return allPlayers.map(p => ({
       ...p,
@@ -32,12 +31,12 @@ export default function WorldCupPlayers() {
 
   return (
     <div>
-      {/* Filtro por time */}
+      {/* Team filter */}
       <div className="flex flex-wrap gap-2 mb-4">
         <button
           onClick={() => setTeamFilter('')}
-          className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-            !teamFilter ? 'bg-[#d4a017] text-dark-900' : 'bg-white/10 text-gray-300 hover:bg-white/20'
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            !teamFilter ? 'bg-accent-500/15 text-accent-300 border border-accent-500/30' : 'bg-surface-700/50 text-text-muted border border-transparent hover:text-text-secondary'
           }`}
         >
           Todos
@@ -46,8 +45,8 @@ export default function WorldCupPlayers() {
           <button
             key={t}
             onClick={() => setTeamFilter(t)}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-              teamFilter === t ? 'bg-[#d4a017] text-dark-900' : 'bg-white/10 text-gray-300 hover:bg-white/20'
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              teamFilter === t ? 'bg-accent-500/15 text-accent-300 border border-accent-500/30' : 'bg-surface-700/50 text-text-muted border border-transparent hover:text-text-secondary'
             }`}
           >
             {t}
@@ -55,7 +54,7 @@ export default function WorldCupPlayers() {
         ))}
       </div>
 
-      {/* Categorias de estatísticas */}
+      {/* Stat categories */}
       <div className="flex flex-wrap gap-2 mb-6">
         {Object.entries(categories).map(([key, c]) => (
           <button
@@ -63,8 +62,8 @@ export default function WorldCupPlayers() {
             onClick={() => setStat(key)}
             className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
               stat === key
-                ? 'bg-[#d4a017] text-dark-900'
-                : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
+                ? 'bg-accent-500/15 text-accent-300 border border-accent-500/30'
+                : 'bg-surface-700/50 text-text-muted border border-transparent hover:text-text-secondary'
             }`}
           >
             <span className="mr-1">{c.icon}</span> {c.label}
@@ -74,8 +73,8 @@ export default function WorldCupPlayers() {
           onClick={() => setStat('shotsOnTargetPerGame')}
           className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
             stat === 'shotsOnTargetPerGame'
-              ? 'bg-[#d4a017] text-dark-900'
-              : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
+              ? 'bg-accent-500/15 text-accent-300 border border-accent-500/30'
+              : 'bg-surface-700/50 text-text-muted border border-transparent hover:text-text-secondary'
           }`}
         >
           <span className="mr-1">🎯</span> Média Chutes ao Gol/Jogo
@@ -83,60 +82,60 @@ export default function WorldCupPlayers() {
       </div>
 
       {/* Top 15 */}
-      <div className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden mb-6">
-        <div className="bg-gradient-to-r from-[#1f3a3a] to-[#2a4a4a] px-4 py-3 border-b border-[#d4a017]/30">
-          <h3 className="font-bold text-white">
+      <div className="bg-surface-800 rounded-xl border border-surface-600/50 overflow-hidden mb-6">
+        <div className="px-5 py-3 border-b border-surface-600/50 bg-surface-700/30">
+          <h3 className="font-display font-bold text-text-primary text-sm">
             Top 15 — {cat.icon} {cat.label}
           </h3>
         </div>
-        <div className="divide-y divide-gray-100 dark:divide-gray-700/50">
+        <div className="divide-y divide-surface-600/30">
           {top15.map((player, i) => (
             <div
               key={player.id}
-              className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/30 ${
-                i < 3 ? 'bg-[#d4a017]/5 dark:bg-[#d4a017]/10' : ''
+              className={`flex items-center gap-3 px-5 py-3 transition-colors hover:bg-surface-700/30 ${
+                i < 3 ? 'bg-gold-500/5' : ''
               }`}
             >
               <div className={`w-6 text-center font-bold text-sm ${
-                i === 0 ? 'text-yellow-500' : i === 1 ? 'text-gray-400' : i === 2 ? 'text-amber-600' : 'text-gray-500'
+                i === 0 ? 'text-gold-400' : i === 1 ? 'text-text-secondary' : i === 2 ? 'text-amber-600' : 'text-text-muted'
               }`}>
                 {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">{player.name}</span>
-                  <span className="text-xs px-1.5 py-0.5 rounded bg-white/10 text-gray-400">{player.number}</span>
+                  <span className="text-sm font-semibold text-text-primary">{player.name}</span>
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-surface-700 text-text-muted font-mono">{player.number}</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-gray-500">
+                <div className="flex items-center gap-2 text-xs text-text-muted">
                   <span>{player.team}</span>
                   <span>•</span>
                   <span>{player.position}</span>
                 </div>
               </div>
               <div className="text-right">
-                <span className={`text-lg font-bold ${
-                  i === 0 ? 'text-[#d4a017]' : 'text-gray-800 dark:text-gray-200'
+                <span className={`text-lg font-mono font-bold ${
+                  i === 0 ? 'text-gold-400' : 'text-text-primary'
                 }`}>
                   {player[stat]}
                 </span>
-                <p className="text-xs text-gray-400">{cat.label}</p>
+                <p className="text-[10px] text-text-muted">{cat.label}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Tabela completa */}
-      <div className="bg-white dark:bg-dark-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden">
-        <div className="bg-gradient-to-r from-[#1f3a3a] to-[#2a4a4a] px-4 py-3 border-b border-[#d4a017]/30">
-          <h3 className="font-bold text-white">
+      {/* Full table */}
+      <div className="bg-surface-800 rounded-xl border border-surface-600/50 overflow-hidden">
+        <div className="px-5 py-3 border-b border-surface-600/50 bg-surface-700/30">
+          <h3 className="font-display font-bold text-text-primary text-sm">
             Todos os Jogadores — {cat.icon} {cat.label}
           </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100 dark:border-gray-700/50 text-left text-xs text-gray-400">
+              <tr className="border-b border-surface-600/30 text-left text-xs text-text-muted">
                 <th className="px-4 py-2 font-medium">#</th>
                 <th className="px-4 py-2 font-medium">Jogador</th>
                 <th className="px-4 py-2 font-medium">Time</th>
@@ -150,25 +149,25 @@ export default function WorldCupPlayers() {
                 <th className="px-4 py-2 font-medium text-right">Min</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
+            <tbody className="divide-y divide-surface-600/30">
               {sorted.map((player, i) => (
-                <tr key={player.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                  <td className="px-4 py-2 text-gray-500">{i + 1}</td>
+                <tr key={player.id} className="hover:bg-surface-700/30 transition-colors">
+                  <td className="px-4 py-2 text-text-muted">{i + 1}</td>
                   <td className="px-4 py-2">
-                    <span className="font-medium text-gray-800 dark:text-gray-200">{player.name}</span>
-                    <span className="text-xs text-gray-400 ml-1">#{player.number}</span>
+                    <span className="font-medium text-text-primary">{player.name}</span>
+                    <span className="text-xs text-text-muted ml-1 font-mono">#{player.number}</span>
                   </td>
-                  <td className="px-4 py-2 text-gray-600 dark:text-gray-300">{player.team}</td>
+                  <td className="px-4 py-2 text-text-secondary">{player.team}</td>
                   <td className="px-4 py-2">
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-gray-400">{player.position}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-surface-700 text-text-muted">{player.position}</span>
                   </td>
-                  <td className="px-4 py-2 text-right font-medium text-green-500">{player.goals}</td>
-                  <td className="px-4 py-2 text-right font-medium text-blue-500">{player.assists}</td>
-                  <td className="px-4 py-2 text-right text-gray-600 dark:text-gray-300">{player.shots}</td>
-                  <td className="px-4 py-2 text-right text-gray-600 dark:text-gray-300">{player.tackles}</td>
-                  <td className="px-4 py-2 text-right text-gray-600 dark:text-gray-300">{player.interceptions}</td>
-                  <td className="px-4 py-2 text-right text-gray-600 dark:text-gray-300">{player.duelsWon}</td>
-                  <td className="px-4 py-2 text-right text-gray-500">{player.minutesPlayed}</td>
+                  <td className="px-4 py-2 text-right font-medium text-accent-300">{player.goals}</td>
+                  <td className="px-4 py-2 text-right font-medium text-info-400">{player.assists}</td>
+                  <td className="px-4 py-2 text-right text-text-secondary">{player.shots}</td>
+                  <td className="px-4 py-2 text-right text-text-secondary">{player.tackles}</td>
+                  <td className="px-4 py-2 text-right text-text-secondary">{player.interceptions}</td>
+                  <td className="px-4 py-2 text-right text-text-secondary">{player.duelsWon}</td>
+                  <td className="px-4 py-2 text-right text-text-muted">{player.minutesPlayed}</td>
                 </tr>
               ))}
             </tbody>
