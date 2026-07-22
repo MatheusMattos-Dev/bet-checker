@@ -67,3 +67,18 @@ export async function fetchPlayers() {
     return [];
   }
 }
+
+export async function fetchLineups(date, homeTeam, awayTeam) {
+  try {
+    // Encode team names for URL
+    const encodedHome = encodeURIComponent(homeTeam);
+    const encodedAway = encodeURIComponent(awayTeam);
+    const res = await fetch(`${BASE_URL}/lineups/${date}/${encodedHome}/${encodedAway}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.available !== false ? data : null;
+  } catch (error) {
+    console.error('Erro ao buscar escalações reais:', error);
+    return null;
+  }
+}

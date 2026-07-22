@@ -71,6 +71,7 @@ export function AppProvider({ children }) {
                 const minutes = String(d.getMinutes()).padStart(2, '0');
                 return `${day}/${month} às ${hours}:${minutes}`;
               })() : '20/07 às 16:00',
+              dateISO: f.date_utc || '',
               home: homeTeam,
               away: awayTeam,
               homeGoals: f.home_goals,
@@ -229,6 +230,8 @@ export function AppProvider({ children }) {
         goalDiff: st?.gd || 0,
         played: st?.pld || 0,
         won: st?.w || 0,
+        drawn: st?.d || 0,
+        lost: st?.l || 0,
         form: getTeamForm(t.name).join(''),
         yellowCards: 0
       };

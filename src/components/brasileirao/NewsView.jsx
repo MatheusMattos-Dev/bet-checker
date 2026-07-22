@@ -1,165 +1,159 @@
 import { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 
-const news = [
+const fallbackNews = [
   {
-    id: 1,
-    title: 'Flamengo lidera o Brasileirão com campanha dominante',
-    summary: 'O Rubro-Negro carioca segue na liderança com 66 pontos após 30 rodadas, com Pedro como artilheiro com 18 gols.',
-    date: '2026-07-18',
-    category: 'Análise',
-    image: '🔴⚫',
+    id: 1, title: 'Fim de semana agitado no Brasileirão',
+    summary: 'Acompanhe tudo sobre a próxima rodada, com clássicos emocionantes e briga intensa no topo da tabela.',
+    date: '2026-07-22', category: 'Prévia', image: '⚽'
   },
   {
-    id: 2,
-    title: 'Palmeiras busca o título com Endrick em alta',
-    summary: 'O time paulista está em 2º lugar e depende de si mesmo para conquistar o campeonato. Endrick tem 16 gols.',
-    date: '2026-07-17',
-    category: 'Destaque',
-    image: '🟢⚪',
+    id: 2, title: 'Janela de transferências movimenta bastidores',
+    summary: 'Clubes correm contra o tempo para fechar últimos reforços antes do fechamento da janela internacional.',
+    date: '2026-07-21', category: 'Mercado', image: '💸'
   },
   {
-    id: 3,
-    title: 'Zona de rebaixamento: Coritiba B luta pela sobrevivência',
-    summary: 'Com apenas 21 pontos, o time está isolado na lanterna e precisa de milagres para evitar o descenso.',
-    date: '2026-07-16',
-    category: 'Rebaixamento',
-    image: '🟡⚫',
+    id: 3, title: 'Arbitragem sob pressão',
+    summary: 'Comissão de arbitragem analisa lances polêmicos da última rodada e promete maior transparência no VAR.',
+    date: '2026-07-20', category: 'Análise', image: '⚖️'
   },
   {
-    id: 4,
-    title: 'Botafogo surpreende e briga pelo título',
-    summary: 'O Glorioso está em 3º lugar com 61 pontos, impulsionado por Luiz Henrique e Alerrandro.',
-    date: '2026-07-15',
-    category: 'Análise',
-    image: '⚫⭐',
-  },
-  {
-    id: 5,
-    title: 'São Paulo busca vaga na Libertadores com força total',
-    summary: 'O Tricolor está em 4º lugar e Lucero tem sido fundamental com 10 gols na temporada.',
-    date: '2026-07-14',
-    category: 'Libertadores',
-    image: '🔴⚪⚫',
-  },
-  {
-    id: 6,
-    title: 'Hulk continua sendo o craque do Atlético-MG',
-    summary: 'O meia mineiro tem 12 gols e 8 assistências, sendo um dos jogadores mais completos do campeonato.',
-    date: '2026-07-13',
-    category: 'Jogador',
-    image: '⚫⚪',
-  },
-  {
-    id: 7,
-    title: 'Goleiro Rossi do Flamengo faz temporada histórica',
-    summary: 'Com apenas 22 gols sofridos em 30 jogos, Rossi é um dos goleiros mais sólidos do Brasileirão.',
-    date: '2026-07-12',
-    category: 'Goleiro',
-    image: '🧤',
-  },
-  {
-    id: 8,
-    title: 'Rodada 31 promete grandes confrontos',
-    summary: 'Na próxima rodada, Flamengo recebe o Palmeiras em um dos jogos mais aguardados do campeonato.',
-    date: '2026-07-11',
-    category: 'Prévia',
-    image: '⚽',
-  },
+    id: 4, title: 'Corrida pelo artilheiro do campeonato',
+    summary: 'Atacantes disparam na frente e prometem uma briga acirrada pela Chuteira de Ouro do Brasileirão.',
+    date: '2026-07-19', category: 'Destaque', image: '👟'
+  }
 ];
 
-const categories = ['Todas', 'Análise', 'Destaque', 'Rebaixamento', 'Libertadores', 'Jogador', 'Prévia'];
+const CardImage = ({ isRealImage, image }) => (
+  isRealImage ? (
+    <img src={image} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+  ) : (
+    <div className="absolute inset-0 bg-gradient-to-br from-surface-800 to-surface-900 flex items-center justify-center">
+      <span className="text-6xl transform group-hover:scale-110 transition-transform duration-700">{image}</span>
+    </div>
+  )
+);
+
+function HeroCard({ item }) {
+  return (
+    <div onClick={() => item.link ? window.open(item.link, '_blank') : null} 
+         className="md:col-span-2 lg:col-span-3 relative h-[380px] sm:h-[480px] rounded-[2rem] overflow-hidden cursor-pointer group shadow-xl border border-surface-600/30 hover:border-surface-500/50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+      <CardImage isRealImage={item.isRealImage} image={item.image} />
+      <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-900/40 to-transparent opacity-90" />
+      
+      <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 flex flex-col justify-end">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-[10px] sm:text-xs font-bold text-accent-950 bg-accent-400 px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">{item.category}</span>
+          <span className="text-xs font-bold text-text-primary flex items-center gap-1.5 drop-shadow-md">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+            {item.date}
+          </span>
+        </div>
+        <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-display text-text-primary group-hover:text-accent-300 transition-colors leading-tight mb-3 drop-shadow-lg">
+          {item.title}
+        </h3>
+        <p className="text-sm sm:text-base text-text-primary/90 line-clamp-2 max-w-3xl drop-shadow-md font-medium">
+          {item.summary}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function BentoCard({ item }) {
+  return (
+    <div onClick={() => item.link ? window.open(item.link, '_blank') : null} 
+         className="relative h-[280px] sm:h-[320px] rounded-3xl overflow-hidden cursor-pointer group shadow-md border border-surface-600/30 hover:border-surface-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+      <CardImage isRealImage={item.isRealImage} image={item.image} />
+      <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-900/60 to-transparent opacity-90" />
+      
+      <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col justify-end">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-[9px] sm:text-[10px] font-bold text-text-primary bg-surface-600/80 backdrop-blur-md px-2.5 py-1 rounded-full uppercase tracking-wider group-hover:bg-accent-500/20 group-hover:text-accent-300 transition-colors">{item.category}</span>
+          <span className="text-[10px] text-text-primary/80 drop-shadow-md font-semibold">{item.date}</span>
+        </div>
+        <h3 className="text-lg sm:text-xl font-bold font-display text-text-primary group-hover:text-accent-300 transition-colors leading-tight line-clamp-3 drop-shadow-md">
+          {item.title}
+        </h3>
+      </div>
+    </div>
+  );
+}
+
+function ListCard({ item }) {
+  return (
+    <div onClick={() => item.link ? window.open(item.link, '_blank') : null} 
+         className="flex gap-4 p-3 sm:p-4 rounded-2xl bg-surface-800/40 backdrop-blur-xl border border-surface-600/30 hover:border-surface-500/50 hover:bg-surface-700/30 transition-all cursor-pointer group shadow-sm">
+      <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 rounded-xl overflow-hidden relative shadow-md">
+        <CardImage isRealImage={item.isRealImage} image={item.image} />
+      </div>
+      <div className="flex-1 flex flex-col justify-center py-1">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-[9px] sm:text-[10px] font-bold text-text-primary bg-surface-700/80 px-2 py-0.5 rounded-full uppercase tracking-wider group-hover:bg-accent-500/20 group-hover:text-accent-300 transition-colors">{item.category}</span>
+          <span className="text-[10px] text-text-muted">{item.date}</span>
+        </div>
+        <h3 className="text-sm sm:text-base font-bold font-display text-text-primary group-hover:text-accent-300 transition-colors leading-tight mb-1.5 line-clamp-2">
+          {item.title}
+        </h3>
+        <p className="text-xs text-text-secondary line-clamp-2 hidden sm:-webkit-box">
+          {item.summary}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function NewsView() {
   const { brNews } = useApp();
   const [filter, setFilter] = useState('Todas');
   
-  // Combine real news with mock news to always have content
   const allNews = useMemo(() => {
-    if (!brNews || brNews.length === 0) return news;
+    if (!brNews || brNews.length === 0) return fallbackNews;
     
-    // Map real news to the component format
-    const realNews = brNews.map((n, i) => ({
+    return brNews.map((n, i) => ({
       id: `real-${i}`,
       title: n.title,
       summary: n.description,
       date: new Date(n.pub_date).toLocaleDateString('pt-BR'),
-      category: 'Últimas',
-      image: '📰', // fallback emoji
-      link: n.link
+      category: 'Destaque',
+      image: n.image_url || '📰',
+      link: n.link,
+      isRealImage: !!n.image_url
     }));
-    return realNews.length > 0 ? realNews : news;
   }, [brNews]);
 
-  const filtered = filter === 'Todas' ? allNews : allNews.filter((n) => n.category === filter);
-
-  // Update categories dynamically based on what exists
-  const dynamicCategories = useMemo(() => {
-    const cats = new Set(['Todas']);
-    allNews.forEach(n => cats.add(n.category));
-    return Array.from(cats);
-  }, [allNews]);
-
   return (
-    <div className="space-y-4">
-      {/* Category Filter */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        {dynamicCategories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setFilter(cat)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
-              filter === cat
-                ? 'bg-accent-500/15 text-accent-300 border border-accent-500/30'
-                : 'bg-surface-800/50 text-text-secondary border border-surface-700/50 hover:bg-surface-700/50'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+    <div className="space-y-6 animate-fadeIn">
+      {/* Grid Bento / Magazine */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {allNews[0] && <HeroCard item={allNews[0]} />}
+        
+        {allNews[1] && <BentoCard item={allNews[1]} />}
+        {allNews[2] && <BentoCard item={allNews[2]} />}
+        {allNews[3] && <BentoCard item={allNews[3]} />}
       </div>
 
-      {/* News Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filtered.map((item, index) => {
-          const isFeatured = filter === 'Todas' && index === 0;
-          return (
-            <div 
-              key={item.id} 
-              onClick={() => item.link ? window.open(item.link, '_blank') : null}
-              className={`glass-card rounded-2xl border border-surface-600/30 overflow-hidden hover:border-accent-500/40 hover:shadow-xl hover:shadow-accent-500/10 hover:-translate-y-1 transition-all duration-300 cursor-pointer group ${isFeatured ? 'md:col-span-2 lg:col-span-3 flex flex-col md:flex-row' : 'flex flex-col'}`}
-            >
-              <div className={`bg-gradient-to-br from-surface-800 to-surface-900 flex items-center justify-center p-6 ${isFeatured ? 'md:w-1/3 border-b md:border-b-0 md:border-r border-surface-600/30' : 'border-b border-surface-600/30'}`}>
-                <span className={`${isFeatured ? 'text-7xl' : 'text-5xl'} transform group-hover:scale-110 transition-transform duration-500`}>
-                  {item.image}
-                </span>
-              </div>
-              <div className="p-5 flex-1 flex flex-col justify-between bg-surface-900/50 backdrop-blur-sm">
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-[10px] font-bold text-accent-900 bg-accent-400 px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">{item.category}</span>
-                    <span className="text-[10px] font-medium text-text-muted flex items-center gap-1">
-                      🗓️ {item.date}
-                    </span>
-                  </div>
-                  <h3 className={`${isFeatured ? 'text-xl sm:text-2xl' : 'text-base'} font-bold font-display text-text-primary group-hover:text-accent-300 transition-colors leading-tight mb-2`}>
-                    {item.title}
-                  </h3>
-                  <p className={`text-text-secondary ${isFeatured ? 'text-sm' : 'text-xs line-clamp-3'}`}>
-                    {item.summary}
-                  </p>
-                </div>
-                {item.link && (
-                  <div className="mt-4 pt-4 border-t border-surface-600/30 flex items-center gap-1.5 text-xs font-bold text-accent-400 group-hover:text-accent-300 transition-colors">
-                    Ler matéria completa
-                    <span className="transform group-hover:translate-x-1 transition-transform">→</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {/* Feed em Lista */}
+      {allNews.length > 4 && (
+        <div className="mt-8">
+          <div className="flex items-center gap-3 mb-5 px-1">
+            <span className="w-1.5 h-6 rounded-full bg-gradient-to-b from-accent-400 to-accent-500 block shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span>
+            <h3 className="text-xl font-bold font-display text-text-primary tracking-tight">
+              Mais Notícias
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {allNews.slice(4).map(item => <ListCard key={item.id} item={item} />)}
+          </div>
+        </div>
+      )}
+      
+      {allNews.length === 0 && (
+        <div className="text-center py-16 glass-card rounded-2xl">
+          <span className="text-4xl mb-4 block opacity-50">📭</span>
+          <p className="text-text-secondary font-medium">Nenhuma notícia encontrada.</p>
+        </div>
+      )}
     </div>
   );
 }

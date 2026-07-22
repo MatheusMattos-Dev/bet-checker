@@ -64,7 +64,7 @@ export default function ComparativeView() {
   return (
     <div className="space-y-6">
       {/* Team Comparison */}
-      <div className="glass-card rounded-2xl border border-surface-600/50 p-5">
+      <div className="glass-card rounded-2xl border border-surface-600/40 p-5">
         <h3 className="text-sm font-bold text-text-primary mb-4">Comparar Confronto</h3>
         
         {currentMatches.length > 0 && (

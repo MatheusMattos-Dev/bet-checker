@@ -34,7 +34,7 @@ export default function MatchDetail({ match }) {
   return (
     <div className="space-y-6">
       {/* Match Header */}
-      <div className="glass-card rounded-2xl border border-surface-600/50 p-6">
+      <div className="glass-card rounded-2xl border border-surface-600/40 p-6">
         <div className="flex items-center justify-between">
           <div className="flex-1 flex flex-col items-center">
             <div className="w-16 h-16 flex items-center justify-center shrink-0 mb-3 drop-shadow-md">
@@ -69,7 +69,7 @@ export default function MatchDetail({ match }) {
       </div>
 
       {/* Stats Comparison */}
-      <div className="glass-card rounded-2xl border border-surface-600/50 p-5">
+      <div className="glass-card rounded-2xl border border-surface-600/40 p-5">
         <h3 className="text-sm font-bold text-text-primary mb-4">Comparação de Estatísticas</h3>
         <div className="space-y-4">
           <StatBar label="Gols/Jogo" home={3} away={2} />
@@ -80,7 +80,7 @@ export default function MatchDetail({ match }) {
 
       {/* Expected Goals */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="glass-card rounded-2xl border border-surface-600/50 p-5">
+        <div className="glass-card rounded-2xl border border-surface-600/40 p-5">
           <h3 className="text-sm font-bold text-text-primary mb-3">{match.home} — xG</h3>
           <div className="grid grid-cols-2 gap-3">
             <div className="text-center p-3 bg-surface-800/50 rounded-lg">
@@ -95,7 +95,7 @@ export default function MatchDetail({ match }) {
           <p className="text-xs text-text-secondary mt-3">{homeStyle}</p>
         </div>
 
-        <div className="glass-card rounded-2xl border border-surface-600/50 p-5">
+        <div className="glass-card rounded-2xl border border-surface-600/40 p-5">
           <h3 className="text-sm font-bold text-text-primary mb-3">{match.away} — xG</h3>
           <div className="grid grid-cols-2 gap-3">
             <div className="text-center p-3 bg-surface-800/50 rounded-lg">
@@ -112,15 +112,15 @@ export default function MatchDetail({ match }) {
       </div>
 
       {/* H2H */}
-      <div className="glass-card rounded-2xl border border-surface-600/50 p-5">
+      <div className="glass-card rounded-2xl border border-surface-600/40 p-5">
         <h3 className="text-sm font-bold text-text-primary mb-3">Confrontos Diretos</h3>
         <div className="space-y-2">
           {h2h.map((game, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 bg-surface-800/30 rounded-lg">
+            <div key={i} className="flex items-center gap-3 p-3 cursor-pointer transition-colors hover:bg-surface-700/20 group">
               <span className="text-xs text-text-muted flex-1">{game.date}</span>
-              <span className="text-sm font-semibold text-text-primary">{game.home}</span>
+              <span className="text-sm font-semibold text-text-primary group-hover:text-accent-300 transition-colors">{game.home}</span>
               <span className="text-sm font-mono text-text-primary">{game.homeGoals} - {game.awayGoals}</span>
-              <span className="text-sm font-semibold text-text-primary">{game.away}</span>
+              <span className="text-sm font-semibold text-text-primary group-hover:text-accent-300 transition-colors">{game.away}</span>
             </div>
           ))}
         </div>

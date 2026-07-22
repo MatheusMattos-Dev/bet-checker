@@ -70,7 +70,7 @@ export default function StandingsTable() {
                 <tr
                   key={s.pos}
                   onClick={() => navigateView('team', s.team)}
-                  className={`cursor-pointer transition-colors hover:bg-surface-700/20 ${
+                  className={`cursor-pointer transition-colors hover:bg-surface-700/20 group ${
                     isLib ? 'bg-accent-500/[0.03]' : isSul ? 'bg-gold-500/[0.02]' : isZon ? 'bg-danger-500/[0.02]' : ''
                   }`}
                 >
@@ -88,7 +88,7 @@ export default function StandingsTable() {
                       <div className="w-6 h-6 flex items-center justify-center shrink-0">
                         {s.logo_url ? <img src={s.logo_url} alt={s.team} className="w-full h-full object-contain" /> : <span className="text-base">{s.flag}</span>}
                       </div>
-                      <span className="text-sm font-semibold text-text-primary">{s.team}</span>
+                      <span className="text-sm font-semibold text-text-primary group-hover:text-accent-300 transition-colors">{s.team}</span>
                     </div>
                   </td>
                   <td className="px-2 py-3 text-center text-xs text-text-secondary font-mono">{s.pld}</td>
