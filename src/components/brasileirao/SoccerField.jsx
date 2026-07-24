@@ -68,17 +68,17 @@ export default function SoccerField({ match }) {
       while (mid.length < 3 && extras.length) mid.push(extras.shift());
       while (att.length < 3 && extras.length) att.push(extras.shift());
 
-      return [gk, def, mid, att];
+      return { starters: [gk, def, mid, att], bench: extras.slice(0, 10) };
     };
 
     return {
-      homeLineup: getFormation(match.home),
-      awayLineup: getFormation(match.away)
+      home: getFormation(match.home),
+      away: getFormation(match.away)
     };
   }, [brPlayers, match.home, match.away]);
 
   // Decidir qual escalação usar
-  const { homeLineup, awayLineup, homeFormation, awayFormation } = useMemo(() => {
+  const { homeLineup, awayLineup, homeFormation, awayFormation, homeBench, awayBench } = useMemo(() => {
     if (isReal && realLineups) {
       const homeRows = realLineups.home?.players || [];
       const awayRows = realLineups.away?.players || [];
@@ -89,24 +89,28 @@ export default function SoccerField({ match }) {
       
       if (hasHomePlayers || hasAwayPlayers) {
         return {
-          homeLineup: hasHomePlayers ? homeRows : simulatedLineups.homeLineup,
-          awayLineup: hasAwayPlayers ? awayRows : simulatedLineups.awayLineup,
+          homeLineup: hasHomePlayers ? homeRows : simulatedLineups.home.starters,
+          awayLineup: hasAwayPlayers ? awayRows : simulatedLineups.away.starters,
           homeFormation: realLineups.home?.formation || '',
-          awayFormation: realLineups.away?.formation || ''
+          awayFormation: realLineups.away?.formation || '',
+          homeBench: simulatedLineups.home.bench,
+          awayBench: simulatedLineups.away.bench
         };
       }
     }
     
     return {
-      homeLineup: simulatedLineups.homeLineup,
-      awayLineup: simulatedLineups.awayLineup,
+      homeLineup: simulatedLineups.home.starters,
+      awayLineup: simulatedLineups.away.starters,
       homeFormation: '4-3-3',
-      awayFormation: '4-3-3'
+      awayFormation: '4-3-3',
+      homeBench: simulatedLineups.home.bench,
+      awayBench: simulatedLineups.away.bench
     };
   }, [isReal, realLineups, simulatedLineups]);
 
   const renderPlayer = (p, teamColor) => {
-    if (!p) return <div className="w-16 h-20" />;
+    if (!p) return <div className="w-14 h-16" />;
     
     const name = p.name || '';
     const names = name.split(' ');
@@ -131,15 +135,15 @@ export default function SoccerField({ match }) {
     }
 
     return (
-      <div key={p.id || p.name} className="flex flex-col items-center justify-center w-16 z-10 hover:-translate-y-2 transition-transform cursor-pointer group">
-        <div 
-          className="relative w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold border-2 border-white/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] text-white group-hover:scale-110 transition-transform bg-surface-700"
+      <div key={p.id || p.name} className="flex flex-col items-center justify-center w-14 z-10 hover:-translate-y-2 transition-transform cursor-pointer group">
+        <div
+          className="relative w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-white/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] text-white group-hover:scale-110 transition-transform bg-neutral-700"
           style={{ backgroundColor: !photoUrl ? teamColor : undefined }}
         >
           {photoUrl ? (
             <>
               <img src={photoUrl} alt={name} className="w-full h-full object-cover rounded-full" />
-              <div 
+              <div
                 className="absolute -bottom-1 -right-1 w-4.5 h-4.5 rounded-full flex items-center justify-center text-[9px] font-bold border border-white/80 shadow-sm"
                 style={{ backgroundColor: teamColor }}
               >
@@ -150,7 +154,7 @@ export default function SoccerField({ match }) {
             shirtNumber
           )}
         </div>
-        <div className="text-xs font-bold text-white bg-surface-900/80 px-2.5 py-1 rounded-full mt-2 truncate max-w-[90px] text-center drop-shadow-lg backdrop-blur-md group-hover:bg-accent-500 transition-colors border border-white/20">
+        <div className="text-[10px] font-bold text-white bg-black/80 px-2 py-0.5 rounded-full mt-1 truncate max-w-[80px] text-center backdrop-blur-md group-hover:bg-green-500 transition-colors border border-white/10">
           {displayName}
         </div>
       </div>
@@ -164,17 +168,57 @@ export default function SoccerField({ match }) {
   );
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center p-2 sm:p-4 animate-fadeIn">
+    <div className="w-full h-full flex flex-col items-center p-2 sm:p-4 animate-fadeIn">
       
+      {/* BANCO DE RESERVAS */}
+      <div className="w-full max-w-lg mb-4 card p-4 flex flex-col gap-2 relative overflow-hidden">
+        <h4 className="text-[10px] font-bold text-ink-400 uppercase tracking-widest text-center flex items-center justify-center gap-2 relative z-10">
+          <span className="w-8 h-px bg-gray-200"></span>
+          Banco de Reservas
+          <span className="w-8 h-px bg-gray-200"></span>
+        </h4>
+
+        <div className="flex justify-between items-center px-2 relative z-10">
+          <span className="text-[10px] font-bold text-ink-900 uppercase bg-gray-50 px-2 py-0.5 rounded border border-gray-100">{match.home}</span>
+          <span className="text-[10px] font-bold text-ink-900 uppercase bg-gray-50 px-2 py-0.5 rounded border border-gray-100">{match.away}</span>
+        </div>
+
+        <div className="flex items-center gap-2 relative z-10">
+          {/* Home Bench Carousel */}
+          <div className="flex-1 min-w-0 overflow-hidden mask-edges relative">
+             <div className="flex gap-2 w-max animate-marquee pause-on-hover px-2">
+               {[...homeBench, ...homeBench, ...homeBench].map((p, idx) => (
+                 <div key={`${p.id}-${idx}`} className="shrink-0 scale-90 opacity-70 hover:opacity-100 hover:scale-105 transition-all">
+                   {renderPlayer(p, '#2563eb')}
+                 </div>
+               ))}
+             </div>
+          </div>
+
+          <div className="w-px h-16 bg-gradient-to-b from-transparent via-gray-200 to-transparent shrink-0"></div>
+
+          {/* Away Bench Carousel */}
+          <div className="flex-1 min-w-0 overflow-hidden mask-edges relative">
+             <div className="flex gap-2 w-max animate-marquee-reverse pause-on-hover px-2">
+               {[...awayBench, ...awayBench, ...awayBench].map((p, idx) => (
+                 <div key={`${p.id}-${idx}`} className="shrink-0 scale-90 opacity-70 hover:opacity-100 hover:scale-105 transition-all">
+                   {renderPlayer(p, '#7c3aed')}
+                 </div>
+               ))}
+             </div>
+          </div>
+        </div>
+      </div>
+
       {/* Title + Status */}
       <div className="flex items-center gap-2 mb-4">
-        <span className={`w-2 h-2 rounded-full ${isReal ? 'bg-accent-500' : 'bg-gold-500'} animate-pulse`}></span>
-        <h3 className="text-sm font-bold font-display text-white tracking-wide uppercase">
+        <span className={`w-2 h-2 rounded-full ${isReal ? 'bg-green-500' : 'bg-gold-500'} animate-pulse`}></span>
+        <h3 className="text-sm font-bold font-display text-ink-900 tracking-wide uppercase">
           {loading ? 'Carregando Escalações...' : isReal ? 'Escalações Oficiais' : 'Escalações Prováveis'}
         </h3>
         {isReal && (
-          <span className="text-[9px] bg-accent-500/20 text-accent-300 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-accent-500/30">
-            AO VIVO
+          <span className="tag bg-green-500 text-white">
+            Ao vivo
           </span>
         )}
       </div>
@@ -182,15 +226,15 @@ export default function SoccerField({ match }) {
       {/* Formação */}
       {(homeFormation || awayFormation) && (
         <div className="flex items-center justify-between w-full max-w-xs mb-3 text-[10px]">
-          <span className="text-white/70 font-mono font-bold bg-surface-900/60 px-2 py-0.5 rounded">{homeFormation || '?'}</span>
-          <span className="text-white/40">×</span>
-          <span className="text-white/70 font-mono font-bold bg-surface-900/60 px-2 py-0.5 rounded">{awayFormation || '?'}</span>
+          <span className="text-ink-600 font-mono font-bold bg-gray-50 border border-gray-100 px-2 py-0.5 rounded">{homeFormation || '?'}</span>
+          <span className="text-ink-400">×</span>
+          <span className="text-ink-600 font-mono font-bold bg-gray-50 border border-gray-100 px-2 py-0.5 rounded">{awayFormation || '?'}</span>
         </div>
       )}
 
       {/* Container do Campo Verde */}
       <div 
-        className="relative w-full max-w-full flex-1 min-h-[600px] lg:aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl flex flex-col p-4 mx-auto"
+        className="relative w-full max-w-lg flex-1 min-h-[400px] max-h-[60vh] rounded-2xl overflow-hidden shadow-2xl flex flex-col p-2 mx-auto"
         style={{ 
           backgroundImage: 'repeating-linear-gradient(0deg, #2a7a30, #2a7a30 10%, #256b2a 10%, #256b2a 20%)',
           boxShadow: 'inset 0 0 30px rgba(0,0,0,0.6), 0 20px 40px rgba(0,0,0,0.4)'
@@ -226,7 +270,7 @@ export default function SoccerField({ match }) {
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/30 backdrop-blur-sm rounded-2xl">
             <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-2 border-accent-400 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-2 border-green-400 border-t-transparent rounded-full animate-spin"></div>
               <span className="text-xs text-white/80 font-medium">Buscando escalações...</span>
             </div>
           </div>

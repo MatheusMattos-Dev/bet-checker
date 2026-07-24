@@ -1,34 +1,80 @@
 @import "tailwindcss";
 
 @theme {
-  /* Surface — dark backgrounds */
-  --color-surface-950: #06080a;
-  --color-surface-900: #0c1219;
-  --color-surface-800: #131b28;
-  --color-surface-700: #1a2638;
-  --color-surface-600: #243347;
+  /* Gray — page background & structure */
+  --color-gray-50: #eef0f3;
+  --color-gray-100: #e3e7eb;
+  --color-gray-200: #d5dae0;
+  --color-gray-300: #c1c8d1;
+  --color-paper: #ffffff;
 
-  /* Accent — emerald green */
-  --color-accent-500: #10b981;
-  --color-accent-400: #34d399;
-  --color-accent-300: #6ee7b7;
+  /* Ink — text */
+  --color-ink-900: #171a21;
+  --color-ink-600: #6b7480;
+  --color-ink-400: #9aa2ac;
 
-  /* Gold — trophy/premium */
-  --color-gold-500: #f59e0b;
-  --color-gold-400: #fbbf24;
+  /* Green — primary action / positive */
+  --color-green-700: #1c7a51;
+  --color-green-500: #2fa876;
+  --color-green-100: #e1f4ea;
 
-  /* Danger — red/alert */
-  --color-danger-500: #ef4444;
-  --color-danger-400: #f87171;
+  /* Gold — tag accent (news, draw) */
+  --color-gold-700: #8a6d1f;
+  --color-gold-500: #f2c94c;
+  --color-gold-100: #fdf3d9;
 
-  /* Info — blue */
-  --color-info-500: #3b82f6;
-  --color-info-400: #60a5fa;
+  /* Red — tag accent (hot, danger, rebaixamento) */
+  --color-red-700: #a13a3a;
+  --color-red-500: #eb5757;
+  --color-red-100: #fdeaea;
 
-  /* Text */
-  --color-text-primary: #f1f5f9;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #475569;
+  /* Blue — secondary accent (info, draw fallback) */
+  --color-blue-700: #2c4f9e;
+  --color-blue-500: #3b6fd4;
+  --color-blue-100: #e7edfb;
+
+  /* Violet & teal — nav icon variety only (Times / Análises) */
+  --color-violet-700: #6c3fb5;
+  --color-violet-500: #8b5cf0;
+  --color-teal-700: #0f7a72;
+  --color-teal-500: #16a396;
+
+  --font-display: 'Sora', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+}
+
+/* Dark mode — overrides the same semantic tokens, so every component that
+   already uses bg-gray-50/text-ink-900/bg-paper/etc. re-themes for free. */
+.dark {
+  --color-gray-50: #14171c;
+  --color-gray-100: #1e222a;
+  --color-gray-200: #2b303a;
+  --color-gray-300: #3d434e;
+  --color-paper: #1b1f27;
+
+  --color-ink-900: #f2f3f5;
+  --color-ink-600: #9aa0ab;
+  --color-ink-400: #666c78;
+
+  --color-green-700: #4ecb96;
+  --color-green-500: #2fa876;
+  --color-green-100: #16342a;
+
+  --color-gold-700: #f0c85c;
+  --color-gold-500: #f2c94c;
+  --color-gold-100: #3a2f14;
+
+  --color-red-700: #f0888a;
+  --color-red-500: #eb5757;
+  --color-red-100: #3a1e1f;
+
+  --color-blue-700: #8fabf0;
+  --color-blue-500: #3b6fd4;
+  --color-blue-100: #1c2740;
+
+  --color-violet-700: #b79bf2;
+  --color-teal-700: #4fd0c4;
 }
 
 @layer base {
@@ -42,24 +88,23 @@
     font-family: var(--font-mono);
   }
   body {
-    @apply bg-surface-950 text-text-primary;
+    @apply bg-gray-50 text-ink-900;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  :focus-visible {
+    outline: 2px solid var(--color-green-500);
+    outline-offset: 2px;
+  }
 }
 
-/* Spinner */
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(16, 185, 129, 0.2);
-  border-top-color: #10b981;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Page container */
@@ -67,24 +112,43 @@
   @apply max-w-7xl mx-auto px-4 py-6;
 }
 
+/* Spinner */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(47, 168, 118, 0.2);
+  border-top-color: var(--color-green-500);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Fade in */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 .animate-fadeIn {
   animation: fadeIn 0.4s ease-out;
 }
 
-/* Slide in right — drawer */
+/* Slide in — drawer panels */
 @keyframes slideInRight {
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
 }
-
-.animate-slide-in-right {
+.animate-slide-in-right,
+.animate-slideInRight {
   animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+.animate-slideInLeft {
+  animation: slideInLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Scale in */
@@ -92,52 +156,80 @@
   from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
 }
-
 .animate-scale-in {
   animation: scaleIn 0.25s ease-out;
 }
 
-/* Pulse glow */
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.25); }
-  50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+/* Paper card — the default module surface */
+.card {
+  @apply bg-paper border border-gray-100 rounded-lg;
+  box-shadow: 0 1px 2px rgba(23, 26, 33, 0.03), 0 10px 22px -16px rgba(23, 26, 33, 0.14);
+}
+.dark .card {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03), 0 10px 22px -16px rgba(0, 0, 0, 0.5);
+}
+.card-hover {
+  @apply transition-all duration-200;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(23, 26, 33, 0.05), 0 16px 28px -16px rgba(23, 26, 33, 0.2);
+}
+.dark .card-hover:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 16px 28px -16px rgba(0, 0, 0, 0.6);
 }
 
-.animate-pulse-glow {
-  animation: pulseGlow 2s infinite;
+/* Team-color accent bar — signature: every roster/team/match module gets
+   a 4px top bar in that club's real color instead of a fixed brand color. */
+.team-bar {
+  height: 4px;
+  width: 100%;
 }
 
-/* Donut chart */
-.donut {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  position: relative;
-}
-
-.donut::after {
-  content: attr(data-value);
-  position: absolute;
-  inset: 6px;
-  background: var(--color-surface-800);
-  border-radius: 50%;
-  display: flex;
+/* Buttons */
+.btn-primary,
+.btn-outline {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5em;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--color-green-500);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--color-green-700);
+}
+.btn-outline {
+  background: var(--color-paper);
+  border: 1px solid var(--color-gray-300);
+  color: var(--color-ink-900);
+}
+.btn-outline:hover {
+  border-color: var(--color-ink-900);
+}
+
+/* Tags / badges — rectangular, not pills, matching the reference */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
   font-size: 10px;
   font-weight: 700;
-  color: var(--color-accent-300);
-  font-family: var(--font-mono);
-}
-
-/* Glassmorphism card */
-.glass-card {
-  @apply bg-surface-800/60 backdrop-blur-xl border border-surface-600/40;
-}
-
-/* Card hover effect */
-.card-hover {
-  @apply transition-all duration-300 hover:border-accent-500/30 hover:shadow-lg hover:shadow-accent-500/5;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
 }
 
 /* Scrollbar hide */
@@ -153,41 +245,45 @@
 ::-webkit-scrollbar {
   width: 6px;
 }
-
 ::-webkit-scrollbar-track {
-  background: var(--color-surface-900);
+  background: var(--color-gray-50);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--color-surface-600);
+  background: var(--color-gray-300);
   border-radius: 3px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-surface-700);
+  background: var(--color-green-500);
 }
 
-/* Gradient text */
-.gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-300 via-accent-400 to-info-400;
-}
-
-/* Shimmer effect */
+/* Shimmer — loading states only */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
-
 .animate-shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(23,26,33,0.05) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 3s infinite;
 }
 
-/* Line clamp utility */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* Infinite marquee — bench carousel */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+.animate-marquee-reverse {
+  animation: marquee 25s linear infinite reverse;
+}
+.pause-on-hover:hover {
+  animation-play-state: paused;
+}
+
+/* Fade edges for scrolling lists */
+.mask-edges {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }

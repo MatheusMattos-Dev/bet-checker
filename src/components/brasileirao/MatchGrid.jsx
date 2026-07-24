@@ -1,13 +1,26 @@
 import { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
+import { IconBall } from '../icons';
 
-function generateCoverage() {
-  return Math.floor(Math.random() * 40) + 55;
+function TeamRow({ name, logoUrl, goals, isWinner, played, isHome }) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="w-8 h-8 shrink-0 flex items-center justify-center">
+        {logoUrl ? <img src={logoUrl} alt={name} className="w-full h-full object-contain" /> : <IconBall className="w-5 h-5 text-gray-300" />}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-bold text-ink-900 truncate">{name}</div>
+        <div className={`text-[9px] font-bold uppercase tracking-wider ${isHome ? 'text-blue-700' : 'text-gold-700'}`}>{isHome ? 'Casa' : 'Fora'}</div>
+      </div>
+      {played && <span className="text-lg font-bold font-display text-ink-900 tabular-nums">{goals}</span>}
+      {isWinner && <span className="tag bg-green-500 text-white shrink-0">Vitória</span>}
+    </div>
+  );
 }
 
 export default function MatchGrid({ onMatchClick }) {
-  const { brRounds, brCurrentRound, getTeam } = useApp();
-  
+  const { brRounds, brCurrentRound, getTeam, getExpectedGoals } = useApp();
+
   const availableRounds = useMemo(() => {
     const rounds = [];
     if (brCurrentRound > 1) rounds.push(brCurrentRound - 1);
@@ -34,77 +47,73 @@ export default function MatchGrid({ onMatchClick }) {
           <button
             key={r}
             onClick={() => setSelectedRound(r)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold transition-all whitespace-nowrap ${
               selectedRound === r
-                ? 'bg-accent-500/15 text-accent-300 border border-accent-500/30'
-                : 'bg-surface-800/50 text-text-secondary border border-surface-700/50 hover:bg-surface-700/50'
+                ? 'bg-green-500 text-white'
+                : 'card text-ink-600 hover:bg-gray-50'
             }`}
           >
             Rodada {r}
-            {r === brCurrentRound && <span className="text-[10px] text-accent-300 bg-accent-500/10 px-1.5 py-0.5 rounded">PRÓXIMA</span>}
+            {r === brCurrentRound && <span className="tag bg-gold-100 text-gold-700">Próxima</span>}
           </button>
         ))}
       </div>
 
-      <div className="glass-card rounded-2xl border border-surface-600/40 overflow-hidden">
-        <div className="px-5 py-4 border-b border-surface-600/30">
-          <h2 className="text-base font-display font-bold text-text-primary">Rodada {selectedRound}</h2>
-          <p className="text-xs text-text-secondary mt-0.5">
-            {selectedRound < brCurrentRound ? 'Jogos encerrados' : 'Próximos jogos'}
-          </p>
-        </div>
+      <div>
+        <h2 className="text-xl font-display font-bold text-ink-900 uppercase tracking-tight">Rodada {selectedRound}</h2>
+        <p className="text-xs text-ink-600 mt-1 uppercase tracking-wider">
+          {selectedRound < brCurrentRound ? 'Jogos encerrados' : 'Próximos jogos'}
+        </p>
+      </div>
 
-        {currentMatches.length > 0 ? (
-          <div className="divide-y divide-surface-600/20">
-            {currentMatches.map((match, i) => (
+      {currentMatches.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {currentMatches.map((match, i) => {
+            const xg = getExpectedGoals(match.home, match.away);
+            const totalXG = parseFloat(xg.expectedGoalsFor) + parseFloat(xg.expectedGoalsAgainst);
+            const isHighScoring = match.homeGoals === null && totalXG > 3.0;
+            const played = match.homeGoals !== null;
+            const isDraw = played && match.homeGoals === match.awayGoals;
+            const homeWon = played && match.homeGoals > match.awayGoals;
+            const awayWon = played && match.awayGoals > match.homeGoals;
+
+            return (
               <button
                 key={i}
                 onClick={() => onMatchClick(match)}
-                className="w-full px-5 py-4 flex items-center gap-4 hover:bg-surface-700/20 transition-colors group"
+                className="card card-hover text-left relative"
               >
-                <div className="flex-1 text-right min-w-0 flex items-center justify-end gap-3">
-                  <div className="text-sm font-semibold text-text-primary truncate group-hover:text-accent-300 transition-colors">{match.home}</div>
-                  <div className="w-6 h-6 flex items-center justify-center shrink-0">
-                    {getTeam(match.home)?.logo_url ? <img src={getTeam(match.home).logo_url} alt={match.home} className="w-full h-full object-contain" /> : <span className="text-sm">⚽</span>}
-                  </div>
+                <span className="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-paper border border-gray-200 shadow-sm flex items-center justify-center text-[9px] font-bold text-ink-400">VS</span>
+
+                <div className="p-4 space-y-3">
+                  <TeamRow name={match.home} logoUrl={getTeam(match.home)?.logo_url} goals={match.homeGoals} isWinner={homeWon} played={played} isHome />
+                  <TeamRow name={match.away} logoUrl={getTeam(match.away)?.logo_url} goals={match.awayGoals} isWinner={awayWon} played={played} isHome={false} />
+
+                  {isDraw && (
+                    <div className="flex justify-center">
+                      <span className="tag bg-gold-100 text-gold-700">Empate</span>
+                    </div>
+                  )}
+                  {!played && isHighScoring && (
+                    <div className="flex justify-center">
+                      <span className="tag bg-red-100 text-red-700">Alta Intensidade</span>
+                    </div>
+                  )}
                 </div>
 
-                {match.homeGoals !== null ? (
-                  <div className="flex items-center gap-2 px-3">
-                    <span className="text-lg font-bold font-display text-text-primary">{match.homeGoals}</span>
-                    <span className="text-xs text-text-muted">x</span>
-                    <span className="text-lg font-bold font-display text-text-primary">{match.awayGoals}</span>
-                  </div>
-                ) : (
-                  <div className="px-3">
-                    <span className="text-xs text-text-muted">{match.date}</span>
-                  </div>
-                )}
-
-                <div className="flex-1 min-w-0 flex items-center justify-start gap-3">
-                  <div className="w-6 h-6 flex items-center justify-center shrink-0">
-                    {getTeam(match.away)?.logo_url ? <img src={getTeam(match.away).logo_url} alt={match.away} className="w-full h-full object-contain" /> : <span className="text-sm">⚽</span>}
-                  </div>
-                  <div className="text-sm font-semibold text-text-primary truncate group-hover:text-accent-300 transition-colors">{match.away}</div>
-                </div>
-
-                <div className="w-16">
-                  <div className="w-full h-1.5 bg-surface-600 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"
-                      style={{ width: `${generateCoverage()}%` }}
-                    />
-                  </div>
+                <div className="px-4 py-2.5 border-t border-gray-100 text-[10px] text-ink-400 uppercase tracking-wider flex items-center justify-between gap-2">
+                  <span className="truncate">{match.venue}</span>
+                  <span className="shrink-0 font-mono">{match.date}</span>
                 </div>
               </button>
-            ))}
-          </div>
-        ) : (
-          <div className="px-5 py-12 text-center text-sm text-text-muted">
-            Aguardando tabela oficial de jogos para esta rodada.
-          </div>
-        )}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="card px-5 py-12 text-center text-sm text-ink-400">
+          Aguardando tabela oficial de jogos para esta rodada.
+        </div>
+      )}
     </div>
   );
 }

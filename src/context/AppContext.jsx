@@ -32,17 +32,22 @@ export function AppProvider({ children }) {
           fetchPlayers()
         ]);
         
-        // Merge Teams
+        // Merge Teams — some sources return the same club twice under
+        // different name variants (e.g. "BOT" and "Botafogo"), so dedupe by
+        // short_name when available and keep whichever record has the
+        // fuller (longer) name.
         if (apiTeams && apiTeams.length > 0) {
           const uniqueTeamsMap = new Map();
           apiTeams.forEach(t => {
-            if (!uniqueTeamsMap.has(t.name)) {
-              uniqueTeamsMap.set(t.name, {
-                id: t.name,
+            const key = (t.short_name && t.short_name.trim()) || t.name;
+            const existing = uniqueTeamsMap.get(key);
+            if (!existing || (t.name?.length || 0) > (existing.name?.length || 0)) {
+              uniqueTeamsMap.set(key, {
+                id: (t.short_name && t.short_name.trim()) || t.name,
                 name: t.name,
                 short: t.short_name,
                 flag: '⚽',
-                logo_url: t.logo_url,
+                logo_url: t.logo_url || existing?.logo_url,
                 api_id: t.id
               });
             }
@@ -51,8 +56,9 @@ export function AppProvider({ children }) {
         }
 
         // Merge Fixtures
+        let roundsMap = {};
         if (apiFixtures && apiFixtures.length > 0) {
-          const roundsMap = {};
+          roundsMap = {};
           apiFixtures.forEach(f => {
             const match = f.round.match(/\d+/);
             const rNum = match ? parseInt(match[0]) : 1;
@@ -118,11 +124,25 @@ export function AppProvider({ children }) {
           setBrNews(apiNewsData);
         }
 
-        if (apiRound) {
-          setBrCurrentRound(apiRound);
-          setBrNextRound(apiRound + 1 > 38 ? 38 : apiRound + 1);
-          setSelectedRound(apiRound);
+        // Current round auto-advances: starting from what the backend
+        // reports, skip forward past any round where every match already
+        // has a result, so a finished round moves the app to the next one
+        // without waiting on the backend's own round counter to catch up.
+        // Only ever moves forward — a stray unplayed match left over in an
+        // old, mostly-finished round must not drag the app backward.
+        let effectiveRound = apiRound || 1;
+        while (
+          roundsMap[effectiveRound] &&
+          roundsMap[effectiveRound].length > 0 &&
+          roundsMap[effectiveRound].every(m => m.homeGoals !== null && m.awayGoals !== null) &&
+          effectiveRound < 38
+        ) {
+          effectiveRound += 1;
         }
+
+        setBrCurrentRound(effectiveRound);
+        setBrNextRound(effectiveRound + 1 > 38 ? 38 : effectiveRound + 1);
+        setSelectedRound(effectiveRound);
         
         if (apiPlayers && apiPlayers.length > 0) {
           const formattedPlayers = apiPlayers.map(p => ({
@@ -167,7 +187,33 @@ export function AppProvider({ children }) {
     if (round !== null) setSelectedRound(round);
   }, []);
 
-  const getTeam = useCallback((id) => brTeams.find(t => t.id === id || t.name === id), [brTeams]);
+  const getTeam = useCallback((id) => {
+    if (!id) return null;
+    const search = String(id).trim().toLowerCase();
+    const norm = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
+    const searchNorm = norm(search);
+
+    // 1. Direct match
+    const exact = brTeams.find(t => 
+      t.id?.toLowerCase() === search || 
+      t.name?.toLowerCase() === search || 
+      t.short?.toLowerCase() === search
+    );
+    if (exact) return exact;
+
+    // 2. Normalized match (without accents)
+    const normMatch = brTeams.find(t => 
+      norm(t.name) === searchNorm || 
+      norm(t.short) === searchNorm
+    );
+    if (normMatch) return normMatch;
+
+    // 3. Partial substring match
+    return brTeams.find(t => 
+      (t.name && norm(t.name).includes(searchNorm)) || 
+      (t.name && searchNorm.includes(norm(t.name)))
+    );
+  }, [brTeams]);
   
   // Dynamic functions based on real data
   const getH2HTeams = useCallback((a, b) => {
