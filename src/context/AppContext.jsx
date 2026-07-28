@@ -190,7 +190,7 @@ export function AppProvider({ children }) {
   const getTeam = useCallback((id) => {
     if (!id) return null;
     const search = String(id).trim().toLowerCase();
-    const norm = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
+    const norm = (str) => (typeof str === 'string' && str) ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
     const searchNorm = norm(search);
 
     // 1. Direct match
@@ -253,15 +253,90 @@ export function AppProvider({ children }) {
     });
   }, [brRounds]);
 
-  const getExpectedGoals = useCallback((team, opponent) => {
+  const getExpectedGoals = useCallback((homeTeamName, awayTeamName) => {
+    const norm = (str) => (typeof str === 'string' && str) ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : "";
+    const hNorm = norm(homeTeamName);
+    const aNorm = norm(awayTeamName);
+
+    const home = brStandings.find(s => norm(s.team) === hNorm || norm(s.short) === hNorm || (s.short && hNorm.includes(norm(s.short))) || norm(s.team).includes(hNorm));
+    const away = brStandings.find(s => norm(s.team) === aNorm || norm(s.short) === aNorm || (s.short && aNorm.includes(norm(s.short))) || norm(s.team).includes(aNorm));
+
+    const homePld = home && home.pld > 0 ? home.pld : 1;
+    const awayPld = away && away.pld > 0 ? away.pld : 1;
+
+    const homeGfAvg = home ? (home.gf / homePld) : 1.35;
+    const homeGaAvg = home ? (home.ga / homePld) : 1.10;
+    const awayGfAvg = away ? (away.gf / awayPld) : 1.15;
+    const awayGaAvg = away ? (away.ga / awayPld) : 1.30;
+
+    const expHome = Number(((homeGfAvg + awayGaAvg) / 2).toFixed(2));
+    const expAway = Number(((awayGfAvg + homeGaAvg) / 2).toFixed(2));
+    const totalXG = Number((expHome + expAway).toFixed(2));
+
+    const goalChancePct = Math.min(95, Math.max(38, Math.round((totalXG / 3.0) * 82)));
+
+    let classification = "Moderada";
+    let isHighGoalChance = false;
+    let badgeLabel = "Chance Moderada ⚽";
+    let badgeColor = "bg-amber-100 text-amber-800 border-amber-300";
+
+    if (totalXG >= 2.55 || goalChancePct >= 70) {
+      classification = "Alta";
+      isHighGoalChance = true;
+      badgeLabel = "Alta Chance de Gols 🔥";
+      badgeColor = "bg-red-500/15 text-red-400 border-red-500/30";
+    } else if (totalXG >= 2.05 || goalChancePct >= 55) {
+      classification = "Moderada";
+      isHighGoalChance = true;
+      badgeLabel = "Possível Chance de Gols ⚽";
+      badgeColor = "bg-emerald-500/15 text-emerald-400 border-emerald-500/30";
+    } else {
+      classification = "Baixa";
+      isHighGoalChance = false;
+      badgeLabel = "Jogo Trancado 🛡️";
+      badgeColor = "bg-slate-800 text-slate-400 border-slate-700";
+    }
+
+    // Result probabilities — Poisson goal model driven by the same xG
+    // above: P(home scores h) x P(away scores a), bucketed into home
+    // win / draw / away win. awayWinPct is derived from the other two
+    // (not summed independently) so the three always add up to 100.
+    const factorial = (n) => { let f = 1; for (let i = 2; i <= n; i++) f *= i; return f; };
+    const maxGoals = 9;
+    let pHome = 0, pDraw = 0, pAway = 0;
+    for (let h = 0; h <= maxGoals; h++) {
+      const ph = Math.exp(-expHome) * Math.pow(expHome, h) / factorial(h);
+      for (let a = 0; a <= maxGoals; a++) {
+        const pa = Math.exp(-expAway) * Math.pow(expAway, a) / factorial(a);
+        const p = ph * pa;
+        if (h > a) pHome += p;
+        else if (h === a) pDraw += p;
+        else pAway += p;
+      }
+    }
+    const pTotal = pHome + pDraw + pAway || 1;
+    const homeWinPct = Math.round((pHome / pTotal) * 100);
+    const drawPct = Math.round((pDraw / pTotal) * 100);
+    const awayWinPct = 100 - homeWinPct - drawPct;
+
     return {
-      expectedGoalsFor: (Math.random() * 2 + 0.5).toFixed(2),
-      expectedGoalsAgainst: (Math.random() * 2 + 0.5).toFixed(2)
+      expectedGoalsFor: expHome.toFixed(2),
+      expectedGoalsAgainst: expAway.toFixed(2),
+      totalXG: totalXG.toFixed(2),
+      goalChancePct,
+      classification,
+      isHighGoalChance,
+      badgeLabel,
+      badgeColor,
+      homeWinPct,
+      drawPct,
+      awayWinPct
     };
-  }, []);
+  }, [brStandings]);
 
   const getTeamStyle = useCallback((team) => {
-    return `O ${team.name} tem se destacado por um jogo dinâmico nesta temporada. Baseando-se no histórico recente, a equipe busca controlar a posse de bola.`;
+    const name = (typeof team === 'string' ? team : team?.name) || 'time';
+    return `O ${name} tem se destacado por um jogo dinâmico nesta temporada. Baseando-se no histórico recente, a equipe busca controlar a posse de bola.`;
   }, []);
 
   const enhancedTeams = useMemo(() => {

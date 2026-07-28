@@ -12,8 +12,8 @@ function TeamRow({ name, logoUrl, goals, isWinner, played, isHome }) {
         <div className="text-sm font-bold text-ink-900 truncate">{name}</div>
         <div className={`text-[9px] font-bold uppercase tracking-wider ${isHome ? 'text-blue-700' : 'text-gold-700'}`}>{isHome ? 'Casa' : 'Fora'}</div>
       </div>
-      {played && <span className="text-lg font-bold font-display text-ink-900 tabular-nums">{goals}</span>}
       {isWinner && <span className="tag bg-green-500 text-white shrink-0">Vitória</span>}
+      {played && <span className="text-lg font-bold font-display text-ink-900 tabular-nums">{goals}</span>}
     </div>
   );
 }
@@ -40,8 +40,18 @@ export default function MatchGrid({ onMatchClick }) {
 
   const currentMatches = brRounds[selectedRound] || [];
 
+  const sortedMatches = useMemo(() => {
+    const list = [...currentMatches];
+    return list.sort((a, b) => {
+      const xgA = getExpectedGoals(a.home, a.away);
+      const xgB = getExpectedGoals(b.home, b.away);
+      return parseFloat(xgB.totalXG) - parseFloat(xgA.totalXG);
+    });
+  }, [currentMatches, getExpectedGoals]);
+
   return (
     <div className="space-y-4">
+      {/* Round Selection */}
       <div className="flex gap-2 overflow-x-auto pb-2">
         {availableRounds.map((r) => (
           <button
@@ -66,12 +76,10 @@ export default function MatchGrid({ onMatchClick }) {
         </p>
       </div>
 
-      {currentMatches.length > 0 ? (
+      {sortedMatches.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {currentMatches.map((match, i) => {
+          {sortedMatches.map((match, i) => {
             const xg = getExpectedGoals(match.home, match.away);
-            const totalXG = parseFloat(xg.expectedGoalsFor) + parseFloat(xg.expectedGoalsAgainst);
-            const isHighScoring = match.homeGoals === null && totalXG > 3.0;
             const played = match.homeGoals !== null;
             const isDraw = played && match.homeGoals === match.awayGoals;
             const homeWon = played && match.homeGoals > match.awayGoals;
@@ -81,24 +89,29 @@ export default function MatchGrid({ onMatchClick }) {
               <button
                 key={i}
                 onClick={() => onMatchClick(match)}
-                className="card card-hover text-left relative"
+                className="card card-hover text-left relative overflow-hidden"
               >
-                <span className="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-paper border border-gray-200 shadow-sm flex items-center justify-center text-[9px] font-bold text-ink-400">VS</span>
-
                 <div className="p-4 space-y-3">
-                  <TeamRow name={match.home} logoUrl={getTeam(match.home)?.logo_url} goals={match.homeGoals} isWinner={homeWon} played={played} isHome />
-                  <TeamRow name={match.away} logoUrl={getTeam(match.away)?.logo_url} goals={match.awayGoals} isWinner={awayWon} played={played} isHome={false} />
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 min-w-0 space-y-2.5">
+                      <TeamRow name={match.home} logoUrl={getTeam(match.home)?.logo_url} goals={match.homeGoals} isWinner={homeWon} played={played} isHome />
+                      <TeamRow name={match.away} logoUrl={getTeam(match.away)?.logo_url} goals={match.awayGoals} isWinner={awayWon} played={played} isHome={false} />
+                    </div>
+                    <span className="shrink-0 w-7 h-7 rounded-full bg-gray-50 border border-gray-200 shadow-sm flex items-center justify-center text-[9px] font-bold text-ink-400">VS</span>
+                  </div>
 
-                  {isDraw && (
-                    <div className="flex justify-center">
+                  <div className="flex items-center justify-between pt-1 gap-2 border-t border-gray-100/60">
+                    {isDraw ? (
                       <span className="tag bg-gold-100 text-gold-700">Empate</span>
-                    </div>
-                  )}
-                  {!played && isHighScoring && (
-                    <div className="flex justify-center">
-                      <span className="tag bg-red-100 text-red-700">Alta Intensidade</span>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        <span className={`tag border text-[10px] font-extrabold px-2 py-0.5 rounded-full ${xg.badgeColor}`}>
+                          {xg.badgeLabel}
+                        </span>
+                        <span className="text-[10px] font-mono text-ink-400 font-bold">xG {xg.totalXG}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="px-4 py-2.5 border-t border-gray-100 text-[10px] text-ink-400 uppercase tracking-wider flex items-center justify-between gap-2">

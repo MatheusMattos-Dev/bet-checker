@@ -13,7 +13,7 @@ export async function fetchTeams() {
 
 export async function fetchFixtures() {
   try {
-    const res = await fetch(`${BASE_URL}/fixtures`);
+    const res = await fetch(`${BASE_URL}/fixtures?limit=500`);
     if (!res.ok) throw new Error('Falha ao carregar partidas');
     return await res.json();
   } catch (error) {

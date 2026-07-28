@@ -109,7 +109,7 @@ export default function PrecisionView() {
                 <th className="px-4 py-3 text-left font-semibold w-8">#</th>
                 <th className="px-3 py-3 text-left font-semibold">Jogador</th>
                 <th className="px-2 py-3 text-center font-semibold w-8">P</th>
-                <th className="px-3 py-3 text-center font-semibold w-12">CA</th>
+                <th className="px-3 py-3 text-center font-semibold w-24">Chutes no Alvo (CA)</th>
                 <th className="px-4 py-3 text-right font-semibold w-20">Média</th>
               </tr>
             </thead>

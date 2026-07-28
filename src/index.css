@@ -278,6 +278,9 @@
 .animate-marquee-reverse {
   animation: marquee 25s linear infinite reverse;
 }
+.animate-marquee-slow {
+  animation: marquee 42s linear infinite;
+}
 .pause-on-hover:hover {
   animation-play-state: paused;
 }

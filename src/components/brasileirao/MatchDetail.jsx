@@ -1,5 +1,5 @@
 import { useApp } from '../../context/AppContext';
-import { getTeamColor } from '../../lib/teamColors';
+import { getPairColors } from '../../lib/teamColors';
 import { IconBall } from '../icons';
 
 function StatBar({ label, home, away }) {
@@ -27,10 +27,9 @@ export default function MatchDetail({ match }) {
   const awayExpected = getExpectedGoals(match.away, match.home);
   const homeForm = getTeamForm(match.home);
   const awayForm = getTeamForm(match.away);
-  const homeStyle = getTeamStyle(match.home);
-  const awayStyle = getTeamStyle(match.away);
-  const homeColor = getTeamColor(match.home);
-  const awayColor = getTeamColor(match.away);
+  const homeStyle = getTeamStyle(getTeam(match.home));
+  const awayStyle = getTeamStyle(getTeam(match.away));
+  const { colorA: homeColor, colorB: awayColor } = getPairColors(match.home, match.away);
 
   const formLabel = { excellent: 'Excelente', good: 'Bom', average: 'Médio', poor: 'Ruim' };
 

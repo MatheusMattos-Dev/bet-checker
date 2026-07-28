@@ -115,6 +115,17 @@ export function IconSun({ className }) {
   );
 }
 
+// Brand mark — confirmed-pick motif (ring + check), same stroke language
+// as the rest of the set, used for the header logo.
+export function IconLogo({ className }) {
+  return (
+    <svg className={className} {...base}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M8.2 12.3l2.6 2.7 5-5.7" />
+    </svg>
+  );
+}
+
 export function IconMoon({ className }) {
   return (
     <svg className={className} {...base}>

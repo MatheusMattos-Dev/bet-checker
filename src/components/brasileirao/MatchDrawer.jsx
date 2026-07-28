@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import SoccerField from './SoccerField';
-import { getTeamColor } from '../../lib/teamColors';
+import { getPairColors } from '../../lib/teamColors';
 import { useRevealed } from '../../lib/useRevealed';
 import { IconBall } from '../icons';
 
@@ -50,8 +50,7 @@ export default function MatchDrawer({ match, onClose }) {
   const expectedGoals = useMemo(() => getExpectedGoals(match.home, match.away), [getExpectedGoals, match.home, match.away]);
   const homeForm = useMemo(() => getTeamForm(match.home), [getTeamForm, match.home]);
   const awayForm = useMemo(() => getTeamForm(match.away), [getTeamForm, match.away]);
-  const homeColor = getTeamColor(match.home);
-  const awayColor = getTeamColor(match.away);
+  const { colorA: homeColor, colorB: awayColor } = getPairColors(match.home, match.away);
   const revealed = useRevealed();
 
   const formStyle = (result) => (
@@ -156,34 +155,27 @@ export default function MatchDrawer({ match, onClose }) {
           </div>
         </div>
 
-        <div className="px-6 py-6 border-b border-gray-100 grid grid-cols-2 gap-4">
-          <div className="card p-4 flex flex-col items-center justify-center">
-            <h4 className="text-[10px] font-bold text-ink-600 mb-3 uppercase tracking-wider text-center">xG (Gols Esperados)</h4>
-            <div className="flex justify-center items-center gap-5">
-              <div className="text-center">
-                <div className="text-2xl font-display font-bold text-green-700">{expectedGoals.expectedGoalsFor}</div>
-                <div className="text-[10px] text-ink-400 mt-1 truncate w-16">{match.home}</div>
-              </div>
-              <div className="text-xl font-bold text-ink-400 mb-3">×</div>
-              <div className="text-center">
-                <div className="text-2xl font-display font-bold text-ink-900">{expectedGoals.expectedGoalsAgainst}</div>
-                <div className="text-[10px] text-ink-400 mt-1 truncate w-16">{match.away}</div>
-              </div>
-            </div>
-          </div>
-          <div className="card p-4 flex flex-col items-center justify-center">
-            <h4 className="text-[10px] font-bold text-ink-600 mb-3 uppercase tracking-wider text-center">Momento (Últimos 5)</h4>
-            <div className="flex flex-col gap-2.5">
-              <div className="flex justify-center gap-1.5">
+        <div className="px-6 py-6 border-b border-gray-100">
+          <h4 className="text-[10px] font-bold text-ink-600 mb-3 uppercase tracking-wider text-center">xG (Gols Esperados)</h4>
+          <div className="card p-5 grid grid-cols-[1fr_auto_1fr] items-start gap-3">
+            <div className="text-center">
+              <div className="text-3xl font-display font-bold text-green-700 tabular-nums">{expectedGoals.expectedGoalsFor}</div>
+              <div className="text-[10px] text-ink-400 mt-1 truncate">{match.home}</div>
+              <div className="flex justify-center gap-1 mt-3">
                 {homeForm.map((result, i) => (
-                  <div key={`h-${i}`} className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold ${formStyle(result)}`}>
+                  <div key={`h-${i}`} className={`w-5 h-5 rounded flex items-center justify-center text-[9px] font-bold ${formStyle(result)}`}>
                     {result}
                   </div>
                 ))}
               </div>
-              <div className="flex justify-center gap-1.5">
+            </div>
+            <div className="text-lg font-bold text-ink-400 pt-2">×</div>
+            <div className="text-center">
+              <div className="text-3xl font-display font-bold text-ink-900 tabular-nums">{expectedGoals.expectedGoalsAgainst}</div>
+              <div className="text-[10px] text-ink-400 mt-1 truncate">{match.away}</div>
+              <div className="flex justify-center gap-1 mt-3">
                 {awayForm.map((result, i) => (
-                  <div key={`a-${i}`} className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold ${formStyle(result)}`}>
+                  <div key={`a-${i}`} className={`w-5 h-5 rounded flex items-center justify-center text-[9px] font-bold ${formStyle(result)}`}>
                     {result}
                   </div>
                 ))}

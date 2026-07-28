@@ -22,11 +22,13 @@ const tabs = [
   { id: 'news', label: 'Notícias', icon: IconNewspaper, hue: 'text-ink-600' },
 ];
 
-function CountdownTimer() {
+function CountdownTimer({ targetDate }) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    const nextRoundDate = new Date('2026-07-26T16:00:00-03:00');
+    if (!targetDate) return;
+    const nextRoundDate = new Date(targetDate);
+    if (isNaN(nextRoundDate)) return;
 
     const tick = () => {
       const now = new Date();
@@ -46,7 +48,7 @@ function CountdownTimer() {
     tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [targetDate]);
 
   const units = [
     { label: 'Dias', value: timeLeft.days },
@@ -114,6 +116,14 @@ export default function BrasileiraoPage() {
     return brRounds[brCurrentRound] || brRounds[brNextRound] || [];
   }, [brRounds, brCurrentRound, brNextRound]);
 
+  // Earliest kickoff among this round's matches — drives the countdown,
+  // instead of a date that goes stale the moment the round changes.
+  const nextKickoff = useMemo(() => {
+    const withDates = roundMatches.filter((m) => m.dateISO);
+    if (withDates.length === 0) return null;
+    return withDates.reduce((earliest, m) => (new Date(m.dateISO) < new Date(earliest.dateISO) ? m : earliest)).dateISO;
+  }, [roundMatches]);
+
   return (
     <div className="animate-fadeIn">
       {/* Hero Section */}
@@ -141,11 +151,11 @@ export default function BrasileiraoPage() {
                     <h1 className="text-xl sm:text-2xl font-black tracking-wider uppercase text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] flex items-center gap-2">
                       BRASILEIRÃO <span className="text-emerald-400 font-extrabold">2026</span>
                     </h1>
-                    <CountdownTimer />
+                    <CountdownTimer targetDate={nextKickoff} />
                   </div>
 
                   <div className="overflow-hidden mask-edges pt-2">
-                    <div className="flex w-max animate-marquee pause-on-hover py-1">
+                    <div className="flex w-max animate-marquee-slow pause-on-hover py-1">
                       {[...roundMatches, ...roundMatches].map((match, i) => (
                         <CarouselMatchCard key={`${match.home}-${match.away}-${i}`} match={match} getTeam={getTeam} onClick={() => setDrawerMatch(match)} />
                       ))}

@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\matheus.chaves\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\node_modules\" node \"C:\\\\Users\\\\MATHEU~1.CHA\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-matheus-chaves-Documents-bet-checker\\\\2db2b8e5-a5e1-4f7c-a6ba-3413b4dd83d2\\\\scratchpad\\\\shot15.js\")",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\matheus.chaves\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\node_modules\" node \"C:\\\\Users\\\\MATHEU~1.CHA\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-matheus-chaves-Documents-bet-checker\\\\2db2b8e5-a5e1-4f7c-a6ba-3413b4dd83d2\\\\scratchpad\\\\shot16.js\")",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\matheus.chaves\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\node_modules\" node \"C:\\\\Users\\\\MATHEU~1.CHA\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-matheus-chaves-Documents-bet-checker\\\\2db2b8e5-a5e1-4f7c-a6ba-3413b4dd83d2\\\\scratchpad\\\\shot17.js\")",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\matheus.chaves\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\node_modules\" node \"C:\\\\Users\\\\MATHEU~1.CHA\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-matheus-chaves-Documents-bet-checker\\\\2db2b8e5-a5e1-4f7c-a6ba-3413b4dd83d2\\\\scratchpad\\\\shot18.js\")",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\matheus.chaves\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\node_modules\" node \"C:\\\\Users\\\\MATHEU~1.CHA\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-matheus-chaves-Documents-bet-checker\\\\2db2b8e5-a5e1-4f7c-a6ba-3413b4dd83d2\\\\scratchpad\\\\shot19.js\")",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\matheus.chaves\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\node_modules\" node \"C:\\\\Users\\\\MATHEU~1.CHA\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-matheus-chaves-Documents-bet-checker\\\\2db2b8e5-a5e1-4f7c-a6ba-3413b4dd83d2\\\\scratchpad\\\\shot20.js\")",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\matheus.chaves\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\node_modules\" node \"C:\\\\Users\\\\MATHEU~1.CHA\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-matheus-chaves-Documents-bet-checker\\\\2db2b8e5-a5e1-4f7c-a6ba-3413b4dd83d2\\\\scratchpad\\\\shot21.js\")",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\matheus.chaves\\\\AppData\\\\Local\\\\npm-cache\\\\_npx\\\\e41f203b7505f1fb\\\\node_modules\" node \"C:\\\\Users\\\\MATHEU~1.CHA\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-matheus-chaves-Documents-bet-checker\\\\2db2b8e5-a5e1-4f7c-a6ba-3413b4dd83d2\\\\scratchpad\\\\shot22.js\")",
+      "Bash(npm ls *)",
+      "Bash(npx --no-install playwright --version)",
+      "Bash(curl -s http://localhost:5173/ -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(npx oxlint *)",
+      "Bash(node -e ' *)",
+      "Bash(python3 -c \"import PIL; print\\('PIL ok'\\)\")",
+      "Bash(python -c \"import PIL; print\\('PIL ok'\\)\")",
+      "Bash(node -e \"require\\('sharp'\\); console.log\\('sharp ok'\\)\")",
+      "Bash(python -c ' *)",
+      "Read(//tmp/**)",
+      "Read(//c/tmp/**)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5173/img/logo-mark.png)"
+    ]
+  }
+}

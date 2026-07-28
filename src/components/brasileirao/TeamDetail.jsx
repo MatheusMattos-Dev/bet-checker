@@ -113,9 +113,9 @@ export default function TeamDetail({ team }) {
     return <div className="text-ink-600 p-4">Time não encontrado.</div>;
   }
 
-  const trend = getTeamForm(teamData);
+  const trend = getTeamForm(teamNameStr);
   const style = getTeamStyle(teamData);
-  const expected = getExpectedGoals(teamData, null);
+  const expected = getExpectedGoals(teamNameStr, null);
   const teamColor = getTeamColor(teamData.name);
 
   const trendLabel = { excellent: 'Excelente', good: 'Bom', average: 'Médio', poor: 'Ruim' };
