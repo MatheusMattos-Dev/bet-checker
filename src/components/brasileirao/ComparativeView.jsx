@@ -63,6 +63,28 @@ export default function ComparativeView() {
 
   return (
     <div className="space-y-6">
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden rounded-2xl border border-slate-800 shadow-2xl p-6 sm:p-8 bg-slate-950 text-white">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity pointer-events-none transition-transform duration-700 hover:scale-105"
+          style={{ backgroundImage: `url('/images/comparative_hero_banner.png')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent pointer-events-none" />
+
+        <div className="relative z-10 space-y-2 max-w-xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-extrabold bg-teal-500/10 text-teal-400 border border-teal-500/30 uppercase tracking-widest backdrop-blur-md">
+            <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+            Head-to-Head & Análises Táticas
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black font-display tracking-tight text-white uppercase drop-shadow-md">
+            Comparativo de Equipes
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed drop-shadow">
+            Compare o ataque, defesa, saldo de gols e expectativas xG entre duas equipes para identificar padrões e vantagens no confronto.
+          </p>
+        </div>
+      </div>
+
       <div className="card p-6">
         <h3 className="text-xl font-display font-bold text-ink-900 uppercase tracking-tight mb-6">Comparar Confronto</h3>
 

@@ -33,13 +33,14 @@ const tagStyle = {
 };
 
 const CardImage = ({ isRealImage, image, icon: Icon }) => (
-  isRealImage ? (
-    <img src={image} className="absolute inset-0 w-full h-full object-cover" />
-  ) : (
-    <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-      <Icon className="w-10 h-10 text-gray-300" />
-    </div>
-  )
+  <div className="absolute inset-0 bg-slate-900 overflow-hidden">
+    <img 
+      src={isRealImage && image ? image : '/images/news_hero_banner.png'} 
+      alt="Notícia"
+      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+  </div>
 );
 
 function ShareIcon() {
@@ -120,6 +121,28 @@ export default function NewsView() {
 
   return (
     <div className="space-y-6 animate-fadeIn">
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden rounded-2xl border border-slate-800 shadow-2xl p-6 sm:p-8 bg-slate-950 text-white">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity pointer-events-none transition-transform duration-700 hover:scale-105"
+          style={{ backgroundImage: `url('/images/news_hero_banner.png')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent pointer-events-none" />
+
+        <div className="relative z-10 space-y-2 max-w-xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-extrabold bg-blue-500/10 text-blue-400 border border-blue-500/30 uppercase tracking-widest backdrop-blur-md">
+            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+            Cobertura Esportiva Ao Vivo
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black font-display tracking-tight text-white uppercase drop-shadow-md">
+            Notícias do Brasileirão
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed drop-shadow">
+            Fique por dentro dos bastidores, prévia dos confrontos, mercado da bola e análise de arbitragem das últimas rodadas.
+          </p>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {allNews.slice(0, 6).map((item) => <NewsCard key={item.id} item={item} />)}
       </div>

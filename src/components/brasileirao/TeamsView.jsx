@@ -29,11 +29,33 @@ export default function TeamsView() {
   }, [brTeams, search]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden rounded-2xl border border-slate-800 shadow-2xl p-6 sm:p-8 bg-slate-950 text-white">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity pointer-events-none transition-transform duration-700 hover:scale-105"
+          style={{ backgroundImage: `url('/stadium_hero_banner.png')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent pointer-events-none" />
+
+        <div className="relative z-10 space-y-2 max-w-xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-extrabold bg-violet-500/10 text-violet-400 border border-violet-500/30 uppercase tracking-widest backdrop-blur-md">
+            <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
+            Clubes da Série A 2026
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black font-display tracking-tight text-white uppercase drop-shadow-md">
+            Times do Brasileirão
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed drop-shadow">
+            Explore as 20 equipes participantes do campeonato, com raio-x completo de elencos, estatísticas e retrospecto recente.
+          </p>
+        </div>
+      </div>
+
       {/* Search */}
       <div className="card p-5">
-        <h2 className="text-base font-display font-bold text-ink-900 uppercase tracking-tight mb-1">Times</h2>
-        <p className="text-xs text-ink-600 mb-4">20 clubes da Série A 2026</p>
+        <h2 className="text-base font-display font-bold text-ink-900 uppercase tracking-tight mb-1">Buscar Clube</h2>
+        <p className="text-xs text-ink-600 mb-4">Filtre as equipes pelo nome</p>
         <input
           type="text"
           placeholder="Buscar time..."

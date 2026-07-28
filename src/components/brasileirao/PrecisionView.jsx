@@ -69,12 +69,23 @@ export default function PrecisionView() {
 
   return (
     <div className="space-y-6">
-      <div className="card overflow-hidden">
-        <span className="team-bar block bg-green-500" />
-        <div className="p-5">
-          <h2 className="text-xl font-bold font-display text-ink-900 uppercase mb-2">Chutes no Alvo</h2>
-          <p className="text-sm text-ink-600">
-            Ranking dos jogadores mais perigosos do campeonato, focando exclusivamente nas finalizações que acertam o gol e dão trabalho ao goleiro.
+      <div className="relative overflow-hidden rounded-2xl border border-slate-800 shadow-2xl p-6 sm:p-8 bg-slate-950 text-white">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity pointer-events-none transition-transform duration-700 hover:scale-105"
+          style={{ backgroundImage: `url('/images/precision_hero_banner.png')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent pointer-events-none" />
+        
+        <div className="relative z-10 space-y-2 max-w-xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-extrabold bg-red-500/10 text-red-400 border border-red-500/30 uppercase tracking-widest backdrop-blur-md">
+            <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+            Análise de Pontaria & Precisão
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black font-display tracking-tight text-white uppercase drop-shadow-md">
+            Chutes no Alvo
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed drop-shadow">
+            Ranking dos atacantes mais letais do Brasileirão 2026, filtrando as finalizações que acertam o gol e exigem intervenção direta do goleiro.
           </p>
         </div>
       </div>
